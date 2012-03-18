@@ -8,6 +8,8 @@
 	border: 0;
 	margin: 0;
 	padding: 0;
+	font-family: arial, helvetica, verdana, sans-serif;
+	font-size: 14px;
 }
 .board {
 	width: 660px;
@@ -19,6 +21,11 @@
 	height: 80px;
 	border: 1px solid #000;
 	float: left;
+	text-align: center;
+	font-size: 40px;
+}
+.black {
+	background-color: #aaffaa;
 }
 input[type=text] {
 	border: 1px solid #000;
@@ -32,7 +39,7 @@ input[type=text] {
 </div> 
 <div class="controlpanel">
 	<label for="fen">FEN</label>
-	<input type="text" size="100" id="fen" class="fen" value="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1" />
+	<input type="text" size="80" id="fen" class="fen" value="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1" />
 	<input type="button" value="submit" id="submitfen" />
 </div>
 
@@ -43,32 +50,36 @@ input[type=text] {
 
 var board = {
 	parsefen: function(fen) {
+		$(".square").text(' ');
 		var fenparts = fen.split(" ");
 		positions = fenparts[0].split("/");
-		var row = 7;
+		var row = 0;
 		var col = 0;
-		console.log(positions);
 		for(var i in positions) {
+			col = 0;
 			for(var p = 0; p < positions[i].length; p++) {
 				this_position = positions[i][p];
-				console.log(this_position);
 				this_position_code = this_position.charCodeAt();
 				if(this_position_code > 47 && this_position_code < 58) {
 					col += (+this_position);
 				} else {
-					$(".square").eq(row * 8 + col).text(this_position);
+					$("#square" + ((row * 8) + col)).text(this_position);
+					console.log(row, col, this_position);
 					col++;
 				}
 			}
-			row--;
+			row++;
+			console.log(row);
 		}
 	}
 };
 
 $(document).ready(function(){
 	var html = '';
+	var b = true;
 	for(var r = 0; r < 64; r++) {
-		html += '<div class="square">&nbsp;</div>';
+		html += '<div id="square' + r + '" class="square ' + (b?'white':'black') + '">&nbsp;</div>';
+		if((r+1) / 8 != ~~((r+1) / 8)) b = !b;
 	}
 	$("#board").html(html);
 	html = '';
