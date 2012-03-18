@@ -41,6 +41,27 @@ input[type=text] {
 
 <script>
 
+var board = {
+	parsefen: function(fen) {
+		var fenparts = fen.split(" ");
+		positions = fenparts[0].split("/");
+		var row = 7;
+		var col = 0;
+		for(var i in positions) {
+			for(var p in positions[i]) {
+				this_position = positions[i][p];
+				this_position_code = this_position.charCodeAt();
+				if(this_position_code > 47 && this_positon_code < 58) {
+					col += +this_position;
+				} else {
+					$(".square").eq(row * 8 + col).text(this_position);
+				}
+			}
+			row--;
+		}
+	}
+};
+
 $(document).ready(function(){
 	var html = '';
 	for(var r = 0; r < 64; r++) {
