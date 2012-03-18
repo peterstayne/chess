@@ -33,7 +33,7 @@ input[type=text] {
 <div class="controlpanel">
 	<label for="fen">FEN</label>
 	<input type="text" size="100" id="fen" class="fen" />
-	<input type="submit" value="submit" />
+	<input type="button" value="submit" id="submitfen" />
 </div>
 
 
@@ -46,6 +46,10 @@ for(var r = 0; r < 64; r++) {
 	html += '<div class="square">&nbsp;</div>';
 }
 $("#board").html(html);
+
+$("#submitfen").click(function() {
+	console.log( $("#fen").val() );
+});
 
 </script>
 
