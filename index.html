@@ -51,7 +51,7 @@ var board = {
 			for(var p in positions[i]) {
 				this_position = positions[i][p];
 				this_position_code = this_position.charCodeAt();
-				if(this_position_code > 47 && this_positon_code < 58) {
+				if(this_position_code > 47 && this_position_code < 58) {
 					col += +this_position;
 				} else {
 					$(".square").eq(row * 8 + col).text(this_position);
