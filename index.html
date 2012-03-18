@@ -41,15 +41,18 @@ input[type=text] {
 
 <script>
 
-var html = '';
-for(var r = 0; r < 64; r++) {
-	html += '<div class="square">&nbsp;</div>';
-}
-$("#board").html(html);
+(function() {
+	var html = '';
+	for(var r = 0; r < 64; r++) {
+		html += '<div class="square">&nbsp;</div>';
+	}
+	$("#board").html(html);
+	html = '';
 
-$("#submitfen").click(function() {
-	console.log( $("#fen").val() );
-});
+	$("#submitfen").click(function() {
+		console.log( $("#fen").val() );
+	});
+})();
 
 </script>
 
