@@ -49,11 +49,11 @@ var board = {
 		var col = 0;
 		console.log(positions);
 		for(var i in positions) {
-			for(var p in positions[i]) {
+			for(var p = 0; p < positions[i].length; p++) {
 				this_position = positions[i][p];
 				this_position_code = this_position.charCodeAt();
 				if(this_position_code > 47 && this_position_code < 58) {
-					col += +this_position;
+					col += (+this_position);
 				} else {
 					$(".square").eq(row * 8 + col).text(this_position);
 					col++;
