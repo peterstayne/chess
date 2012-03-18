@@ -32,7 +32,7 @@ input[type=text] {
 </div> 
 <div class="controlpanel">
 	<label for="fen">FEN</label>
-	<input type="text" size="100" id="fen" class="fen" />
+	<input type="text" size="100" id="fen" class="fen" value="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1" />
 	<input type="button" value="submit" id="submitfen" />
 </div>
 
@@ -41,7 +41,7 @@ input[type=text] {
 
 <script>
 
-(function() {
+$(document).ready(function(){
 	var html = '';
 	for(var r = 0; r < 64; r++) {
 		html += '<div class="square">&nbsp;</div>';
@@ -52,7 +52,7 @@ input[type=text] {
 	$("#submitfen").click(function() {
 		console.log( $("#fen").val() );
 	});
-})();
+});
 
 </script>
 
