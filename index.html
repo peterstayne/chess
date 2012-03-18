@@ -55,6 +55,7 @@ var board = {
 					col += +this_position;
 				} else {
 					$(".square").eq(row * 8 + col).text(this_position);
+					col++;
 				}
 			}
 			row--;
