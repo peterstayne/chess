@@ -71,7 +71,7 @@ $(document).ready(function(){
 	html = '';
 
 	$("#submitfen").click(function() {
-		console.log( $("#fen").val() );
+		board.parsefen($("#fen").val());
 	});
 });
 
