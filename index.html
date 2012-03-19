@@ -48,18 +48,21 @@ input[type=text] {
 
 <script>
 var pieces = {
-	p: 1,
-	n: 2,
-	b: 3,
-	r: 4,
-	q: 5,
-	k: 6,
-	P: 7,
-	N: 8,
-	B: 9,
-	R: 10,
-	Q: 11,
-	K: 12
+	symbols: {
+		p: 1,
+		n: 2,
+		b: 3,
+		r: 4,
+		q: 5,
+		k: 6,
+		P: 7,
+		N: 8,
+		B: 9,
+		R: 10,
+		Q: 11,
+		K: 12
+	}, 
+	numbers: [' ', 'p', 'n', 'b', 'r', 'q', 'k', 'P', 'N', 'B', 'R', 'Q', 'K']
 };
 var node = function() {
 	this.position = [];
@@ -97,13 +100,13 @@ var board = {
 					}
 					col += (+this_position);
 				} else {
-					$("#square" + mark).text(this_position);
-					returnNode.position[mark] = pieces[this_position];
+					returnNode.position[mark] = pieces.symbols[this_position];
 					col++;
 				}
 			}
 			row++;
 		}
+		return returnNode;
 	}
 };
 
@@ -118,7 +121,14 @@ $(document).ready(function(){
 	html = '';
 
 	$("#submitfen").click(function() {
-		board.parsefen($("#fen").val());
+		thisnode = board.parsefen($("#fen").val());
+		thisposition = thisnode.position;
+		console.log(thisposition);
+		var mark = 64;
+		while(mark--) {
+			console.log(mark, thisposition[mark], pieces.numbers[thisposition[mark]]);
+			$(".square").eq(mark).text(pieces.numbers[thisposition[mark]]);
+		}
 	});
 });
 
