@@ -121,12 +121,10 @@ $(document).ready(function(){
 	html = '';
 
 	$("#submitfen").click(function() {
-		thisnode = board.parsefen($("#fen").val());
-		thisposition = thisnode.position;
-		console.log(thisposition);
+		var thisnode = board.parsefen($("#fen").val());
+		var thisposition = thisnode.position;
 		var mark = 64;
 		while(mark--) {
-			console.log(mark, thisposition[mark], pieces.numbers[thisposition[mark]]);
 			$(".square").eq(mark).text(pieces.numbers[thisposition[mark]]);
 		}
 	});
