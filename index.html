@@ -12,17 +12,17 @@
 	font-size: 14px;
 }
 .board {
-	width: 660px;
-	height: 660px;
-
+	width: 500px;
+	height: 500px;
 }	
 .square {
-	width: 80px;
-	height: 80px;
+	width: 60px;
+	height: 60px;
 	border: 1px solid #000;
 	float: left;
 	text-align: center;
-	font-size: 40px;
+	font-size: 30px;
+	font-weight: 800;
 }
 .black {
 	background-color: #aaffaa;
@@ -47,29 +47,62 @@ input[type=text] {
 <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
 
 <script>
+var pieces = {
+	p: 1,
+	n: 2,
+	b: 3,
+	r: 4,
+	q: 5,
+	k: 6,
+	P: 7,
+	N: 8,
+	B: 9,
+	R: 10,
+	Q: 11,
+	K: 12
+};
+var node = function() {
+	this.position = [];
+	this.castle = {
+		k: true,
+		q: true,
+		K: true,
+		Q: true
+	};
+	this.turn = true;
+	this.drawClock = 0;
+	this.fullMove = 1;
+	this.score = 0;
+};
+
 
 var board = {
 	parsefen: function(fen) {
+		var returnNode = new node();
 		$(".square").text(' ');
 		var fenparts = fen.split(" ");
 		positions = fenparts[0].split("/");
 		var row = 0;
 		var col = 0;
+		var mark = 0;
 		for(var i in positions) {
 			col = 0;
 			for(var p = 0; p < positions[i].length; p++) {
+				mark = ((row * 8) + col);
 				this_position = positions[i][p];
 				this_position_code = this_position.charCodeAt();
 				if(this_position_code > 47 && this_position_code < 58) {
+					for(var r = 0; r < +(this_position); r++) {
+						returnNode.position[mark + r] = 0;
+					}
 					col += (+this_position);
 				} else {
-					$("#square" + ((row * 8) + col)).text(this_position);
-					console.log(row, col, this_position);
+					$("#square" + mark).text(this_position);
+					returnNode.position[mark] = pieces[this_position];
 					col++;
 				}
 			}
 			row++;
-			console.log(row);
 		}
 	}
 };
@@ -78,7 +111,7 @@ $(document).ready(function(){
 	var html = '';
 	var b = true;
 	for(var r = 0; r < 64; r++) {
-		html += '<div id="square' + r + '" class="square ' + (b?'white':'black') + '">&nbsp;</div>';
+		html += '<div id="square' + r + '" class="square ' + (b?'white':'black') + '"> </div>';
 		if((r+1) / 8 != ~~((r+1) / 8)) b = !b;
 	}
 	$("#board").html(html);
