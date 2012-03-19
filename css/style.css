@@ -1,0 +1,63 @@
+body {
+	background-color: #444;
+}
+* { 
+	border: 0;
+	margin: 0;
+	padding: 0;
+	font-family: arial, helvetica, verdana, sans-serif;
+	font-size: 14px;
+}
+.board {
+	width: 496px;
+	height: 496px;
+}	
+.board-container {
+	width: 496px;
+	height: 496px;
+	padding: 20px;
+	background-color: #704326;
+	margin: 20px auto;
+	box-shadow: 10px 10px 10px #222;
+}
+.controlpanel {
+	width: 496px;
+	margin: 0 auto;
+	background-color: #fff;
+	padding: 20px;
+}
+.square {
+	width: 60px;
+	height: 60px;
+	border: 1px solid #000;
+	float: left;
+	text-align: center;
+	line-height: 59px;
+}
+.square span {
+	font-size: 30px;
+	font-weight: 800;
+}
+.pwhite {
+	color: #fff;
+	text-shadow: 2px 2px 2px #000;
+}
+.pblack {
+	color: #000;
+	text-shadow: 2px 2px 2px #fff;
+}
+.square.black {
+	background-color: #704326;
+}
+.square.white {
+	background-color: #dbb98c;
+}
+input[type=text] {
+	border: 1px solid #000;
+	width: 400px;
+}
+input[type=button] {
+	width: 55px;
+	height: 19px;
+	margin: 10px 0 0 0;
+}

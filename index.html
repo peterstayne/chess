@@ -2,182 +2,19 @@
 <html>
 <head>
 <title>Chess!</title>
-
-<style type="text/css">
-* { 
-	border: 0;
-	margin: 0;
-	padding: 0;
-	font-family: arial, helvetica, verdana, sans-serif;
-	font-size: 14px;
-}
-.board {
-	width: 500px;
-	height: 500px;
-}	
-.square {
-	width: 60px;
-	height: 60px;
-	border: 1px solid #000;
-	float: left;
-	text-align: center;
-}
-.square span {
-	font-size: 30px;
-	font-weight: 800;
-}
-.pwhite {
-	color: #fff;
-	text-shadow: 2px 2px 2px #000;
-}
-.pblack {
-	color: #000;
-	text-shadow: 2px 2px 2px #fff;
-}
-.square.black {
-	background-color: #7A5A15;
-}
-.square.white {
-	background-color: #D19413;
-}
-input[type=text] {
-	border: 1px solid #000;
-}
-</style>
-
+<link rel="stylesheet" type="text/css" media="screen" href="css/style.css" />
 </head>
 <body>
-<div id="board" class="board">
-
-</div> 
+<div id="board-container" class="board-container">
+	<div id="board" class="board">
+	</div> 
+</div>
 <div class="controlpanel">
 	<label for="fen">FEN</label>
 	<input type="text" size="80" id="fen" class="fen" value="rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2" />
 	<input type="button" value="submit" id="submitfen" />
 </div>
-
-
 <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
-
-<script>
-var algebraicSquares = {
-	ranks: ['h','g','f','e','d','c','b','a'],   // backwards because top rank is rank 0 internally
-	symbols: {},
-	numbers: []
-};
-var sq = 0;
-for(var i = 0; i<8; i++) {
-	for(var r = 8; r; r--) {
-		algebraicSquares.symbols[algebraicSquares.ranks[i]+(9-r)] = sq;
-		algebraicSquares.numbers[sq] = algebraicSquares.ranks[i]+(9-r);
-		sq++;
-	}
-}
-var pieces = {
-	symbols: {
-		p: 1,
-		n: 2,
-		b: 3,
-		r: 4,
-		q: 5,
-		k: 6,
-		P: 7,
-		N: 8,
-		B: 9,
-		R: 10,
-		Q: 11,
-		K: 12
-	}, 
-	numbers: [' ', 'p', 'n', 'b', 'r', 'q', 'k', 'P', 'N', 'B', 'R', 'Q', 'K']
-};
-var node = function() {
-	this.position = [];
-	this.castle = {
-		k: false,
-		q: false,
-		K: false,
-		Q: false
-	};
-	this.drawClock = 0;
-	this.moveNumber = 1;
-	this.enpassantSquare = '-';
-	this.score = 0;
-	this.move = true;    // true = white, false = black
-};
-
-
-var board = {
-	parsefen: function(fen) {
-		var returnNode = new node();
-		$(".square").text(' ');
-		var fenparts = fen.split(" ");
-		positions = fenparts[0].split("/");
-		var row = 0;
-		var col = 0;
-		var mark = 0;
-		for(var i in positions) {
-			col = 0;
-			for(var p = 0; p < positions[i].length; p++) {
-				mark = ((row * 8) + col);
-				this_position = positions[i][p];
-				this_position_code = this_position.charCodeAt();
-				if(this_position_code > 47 && this_position_code < 58) {
-					for(var r = 0; r < +(this_position); r++) {
-						returnNode.position[mark + r] = 0;
-					}
-					col += (+this_position);
-				} else {
-					returnNode.position[mark] = pieces.symbols[this_position];
-					col++;
-				}
-			}
-			row++;
-		}
-		returnNode.move = (fenparts[1].toLowerCase() == "w");
-		var castlemark = fenparts[2].length;
-		while(castlemark--) {
-			if(fenparts[2][castlemark] in {'k':'', 'K':'', 'q':'', 'Q':''}) {
-				returnNode.castle[fenparts[2][castlemark]] = true;
-			}
-		}
-		if(fenparts[3] != "-" && typeof algebraicSquares.symbols[fenparts[3]] !== "undefined") {
-			returnNode.enpassantSquare = algebraicSquares.symbols[fenparts[3]];
-		} else {
-			returnNode.enpassantSquare = -1;
-		}
-		if(fenparts[4] == +fenparts[4]) {
-			returnNode.drawClock = +fenparts[4];
-		}
-		if(fenparts[5] == +fenparts[5]) {
-			returnNode.moveNumber = +fenparts[5];
-		}
-		return returnNode;
-	}
-};
-
-$(document).ready(function(){
-	var html = '';
-	var b = true;
-	for(var r = 0; r < 64; r++) {
-		html += '<div id="square' + r + '" class="square ' + (b?'white':'black') + '"> </div>';
-		if((r+1) / 8 != ~~((r+1) / 8)) b = !b;
-	}
-	$("#board").html(html);
-	html = '';
-
-	$("#submitfen").click(function() {
-		var thisnode = board.parsefen($("#fen").val());
-		var thisposition = thisnode.position;
-		var mark = 64;
-		while(mark--) {
-			thispiece = pieces.numbers[thisposition[mark]];
-			thisColor = (thispiece.toLowerCase() === thispiece) ? "pblack" : "pwhite";
-			$(".square").eq(mark).html("<span class=\"" + thisColor + "\">" + thispiece + "</span>");
-		}
-	});
-});
-
-</script>
-
+<script src="js/chess.js"></script>
 </body>
 </html>
