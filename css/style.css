@@ -1,5 +1,15 @@
 body {
-	background-color: #444;
+	width: 100%;
+	overflow-x: hidden;
+	background: #000000; /* fallback for non-supporting browsers */
+	background-image: -webkit-gradient(radial, center center, 0, center center, 141, from(#555), to(#000)); /* old WebKit Syntax */
+	background-image: -webkit-radial-gradient(center center, circle contain, #555 0%, #000 200%); /* New WebKit syntax */
+	background-image: -moz-radial-gradient(center center, circle contain, #555 0%, #000 200%);
+	background-image: -ms-radial-gradient(center center, circle contain, #555 0%, #000 200%); /* IE10+ */
+	background-image: -o-radial-gradient(center center, circle contain, #555 0%, #000 200%); /* Opera (13?) */
+	background-image: radial-gradient(center center, circle contain, #555 0%, #000 200%); /* standard syntax */
+}
+
 }
 * { 
 	border: 0;

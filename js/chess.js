@@ -113,4 +113,5 @@ $(document).ready(function(){
 			$(".square").eq(mark).html("<span class=\"" + thisColor + "\">" + thispiece + "</span>");
 		}
 	});
+	$("#submitfen").trigger('click');
 });
