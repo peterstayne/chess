@@ -21,11 +21,24 @@
 	border: 1px solid #000;
 	float: left;
 	text-align: center;
+}
+.square span {
 	font-size: 30px;
 	font-weight: 800;
 }
-.black {
-	background-color: #aaffaa;
+.pwhite {
+	color: #fff;
+	text-shadow: 2px 2px 2px #000;
+}
+.pblack {
+	color: #000;
+	text-shadow: 2px 2px 2px #fff;
+}
+.square.black {
+	background-color: #7A5A15;
+}
+.square.white {
+	background-color: #D19413;
 }
 input[type=text] {
 	border: 1px solid #000;
@@ -39,7 +52,7 @@ input[type=text] {
 </div> 
 <div class="controlpanel">
 	<label for="fen">FEN</label>
-	<input type="text" size="80" id="fen" class="fen" value="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1" />
+	<input type="text" size="80" id="fen" class="fen" value="rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2" />
 	<input type="button" value="submit" id="submitfen" />
 </div>
 
@@ -47,6 +60,19 @@ input[type=text] {
 <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
 
 <script>
+var algebraicSquares = {
+	ranks: ['h','g','f','e','d','c','b','a'],   // backwards because top rank is rank 0 internally
+	symbols: {},
+	numbers: []
+};
+var sq = 0;
+for(var i = 0; i<8; i++) {
+	for(var r = 8; r; r--) {
+		algebraicSquares.symbols[algebraicSquares.ranks[i]+(9-r)] = sq;
+		algebraicSquares.numbers[sq] = algebraicSquares.ranks[i]+(9-r);
+		sq++;
+	}
+}
 var pieces = {
 	symbols: {
 		p: 1,
@@ -67,15 +93,16 @@ var pieces = {
 var node = function() {
 	this.position = [];
 	this.castle = {
-		k: true,
-		q: true,
-		K: true,
-		Q: true
+		k: false,
+		q: false,
+		K: false,
+		Q: false
 	};
-	this.turn = true;
 	this.drawClock = 0;
-	this.fullMove = 1;
+	this.moveNumber = 1;
+	this.enpassantSquare = '-';
 	this.score = 0;
+	this.move = true;    // true = white, false = black
 };
 
 
@@ -106,6 +133,24 @@ var board = {
 			}
 			row++;
 		}
+		returnNode.move = (fenparts[1].toLowerCase() == "w");
+		var castlemark = fenparts[2].length;
+		while(castlemark--) {
+			if(fenparts[2][castlemark] in {'k':'', 'K':'', 'q':'', 'Q':''}) {
+				returnNode.castle[fenparts[2][castlemark]] = true;
+			}
+		}
+		if(fenparts[3] != "-" && typeof algebraicSquares.symbols[fenparts[3]] !== "undefined") {
+			returnNode.enpassantSquare = algebraicSquares.symbols[fenparts[3]];
+		} else {
+			returnNode.enpassantSquare = -1;
+		}
+		if(fenparts[4] == +fenparts[4]) {
+			returnNode.drawClock = +fenparts[4];
+		}
+		if(fenparts[5] == +fenparts[5]) {
+			returnNode.moveNumber = +fenparts[5];
+		}
 		return returnNode;
 	}
 };
@@ -125,7 +170,9 @@ $(document).ready(function(){
 		var thisposition = thisnode.position;
 		var mark = 64;
 		while(mark--) {
-			$(".square").eq(mark).text(pieces.numbers[thisposition[mark]]);
+			thispiece = pieces.numbers[thisposition[mark]];
+			thisColor = (thispiece.toLowerCase() === thispiece) ? "pblack" : "pwhite";
+			$(".square").eq(mark).html("<span class=\"" + thisColor + "\">" + thispiece + "</span>");
 		}
 	});
 });
