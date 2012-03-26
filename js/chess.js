@@ -11,6 +11,20 @@ for(var i = 0; i<8; i++) {
 		sq++;
 	}
 }
+var ucpieces = {
+	p: '&#9823;',
+	n: '&#9822;',
+	b: '&#9821;',
+	r: '&#9820;',
+	q: '&#9819;',
+	k: '&#9818;',
+	P: '&#9817;',
+	N: '&#9816;',
+	B: '&#9815;',
+	R: '&#9814;',
+	Q: '&#9813;',
+	K: '&#9812;'
+}
 var pieces = {
 	symbols: {
 		p: 1,
@@ -110,7 +124,7 @@ $(document).ready(function(){
 		while(mark--) {
 			thispiece = pieces.numbers[thisposition[mark]];
 			thisColor = (thispiece.toLowerCase() === thispiece) ? "pblack" : "pwhite";
-			$(".square").eq(mark).html("<span class=\"" + thisColor + "\">" + thispiece + "</span>");
+			$(".square").eq(mark).html("<span class=\"" + thisColor + "\">" + ucpieces[thispiece] + "</span>");
 		}
 	});
 	$("#submitfen").trigger('click');
