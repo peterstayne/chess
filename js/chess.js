@@ -124,7 +124,7 @@ $(document).ready(function(){
 		while(mark--) {
 			thispiece = pieces.numbers[thisposition[mark]];
 			thisColor = (thispiece.toLowerCase() === thispiece) ? "pblack" : "pwhite";
-			$(".square").eq(mark).html("<span class=\"" + thisColor + "\">" + ucpieces[thispiece] + "</span>");
+			$(".square").eq(mark).html("<span class=\"" + thisColor + "\">" + (thispiece != ' ' ? ucpieces[thispiece] : '&nbsp;') + "</span>");
 		}
 	});
 	$("#submitfen").trigger('click');
