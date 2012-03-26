@@ -23,12 +23,11 @@ body {
 	height: 496px;
 }	
 .board-container {
-	width: 496px;
-	height: 496px;
+	width: 476px;
+	height: 476px;
 	padding: 30px;
 	background-color: #704326;
 	margin: 20px auto;
-	box-shadow: 10px 10px 10px #222;
 	background: url(../images/board536.png) no-repeat;
 }
 .controlpanel {
