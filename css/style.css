@@ -57,12 +57,12 @@ body {
 	color: #000;
 	text-shadow: 2px 2px 2px #fff;
 }
-.square.black {
+/*.square.black {
 	background-color: #704326;
 }
 .square.white {
 	background-color: #dbb98c;
-}
+}*/
 input[type=text] {
 	border: 1px solid #000;
 	width: 400px;
