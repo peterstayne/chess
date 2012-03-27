@@ -126,29 +126,37 @@ var perft = function(thisnode) {
 				}
 			}
 			if(tS === 2) { //black knight
-				if(curY > 2 && curX < 8 && (!tP[i-17] || tP[i-17] > 6)) {
-					movelist.push([i, i-17]);
+				if(curY > 1) {
+					if(curY > 2) {
+						if(curX < 8 && (!tP[i-17] || tP[i-17] > 6)) {
+							movelist.push([i, i-17]);
+						}
+						if(curX > 1 && (!tP[i-15] || tP[i-15] > 6)) {
+							movelist.push([i, i-15]);	
+						}
+					}
+					if(curX < 7 && (!tP[i-6] || tP[i-6] > 6)) {
+						movelist.push([i, i-6]);
+					}
+					if(curX > 2 && (!tP[i-10] || tP[i-10] > 6)) {
+						movelist.push([i, i-10]);
+					}
 				}
-				if(curY > 2 && curX > 1 && (!tP[i-15] || tP[i-15] > 6)) {
-					movelist.push([i, i-15]);	
-				}
-				if(curY > 1 && curX < 7 && (!tP[i-6] || tP[i-6] > 6)) {
-					movelist.push([i, i-6]);
-				}
-				if(curY > 1 && curX > 2 && (!tP[i-10] || tP[i-10] > 6)) {
-					movelist.push([i, i-10]);
-				}
-				if(curY < 7 && curX < 8 && (!tP[i+15] || tP[i+15] > 6)) {
-					movelist.push([i, i+15])
-				}
-				if(curY < 7 && curX > 1 && (!tP[i+17] || tP[i+17] > 6)) {
-					movelist.push([i, i+17])
-				}
-				if(curY < 8 && curX < 7 && (!tP[i+10] || tP[i+10] > 6)) {
-					movelist.push([i, i+10]);
-				}
-				if(curY < 8 && curX > 2 && (!tP[i+6] || tP[i+6] > 6)) {
-					movelist.push([i, i+6]);
+				if(curY < 8) {
+					if(curY < 7) {
+						if(curX < 8 && (!tP[i+15] || tP[i+15] > 6)) {
+							movelist.push([i, i+15])
+						}
+						if(curX > 1 && (!tP[i+17] || tP[i+17] > 6)) {
+							movelist.push([i, i+17])
+						}
+					}
+					if(curX < 7 && (!tP[i+10] || tP[i+10] > 6)) {
+						movelist.push([i, i+10]);
+					}
+					if(curX > 2 && (!tP[i+6] || tP[i+6] > 6)) {
+						movelist.push([i, i+6]);
+					}
 				}
 			}
 		}
