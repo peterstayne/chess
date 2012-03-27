@@ -67,18 +67,27 @@ var perft = function(thisnode) {
 	var curY = 8;
 	while(i--) {
 
+		// curX and curY store rank/col information to avoid *'s and /'s
+
 		curX--;
 		if(!curX) { curY--; curX = 8; }
+
+		// tS == 'this' square (numerical value of piece, see pieces.numbers for reference)
+		// tP == 'this' position (array 0-63 of piece #'s)
 
 		tS = tP[i];
 		if(!tS || (color && tS < 7) || (!color && tS > 6)) continue;
 
 		if(color) {
-			if(tS === 7) { // white pawn
+
+			// white
+
+			switch(tS) {
+			case 7: // white pawn
 				if(curY && !tP[i-8]) movelist.push([i, i-8]);
 				if(curY === 7 && !tP[i-16]) movelist.push([i, i-16]);
-			}
-			if(tS === 8) { //white knight
+				break;
+			case 8:
 				if(curY > 1) {
 					if(curY > 2) {
 						if(curX < 8 && tP[i-17] < 7) movelist.push([i, i-17]);
@@ -95,13 +104,17 @@ var perft = function(thisnode) {
 					if(curX < 7 && tP[i+10] < 7) movelist.push([i, i+10]);
 					if(curX > 2 && tP[i+6] < 7) movelist.push([i, i+6]);
 				}
+				break;
 			}
 		} else {
-			if(tS === 1) {  // black pawn
+
+			// black
+			switch(tS) {
+			case 1:
 				if(curY < 8 && !tP[i+8]) movelist.push([i, i+8]);
 				if(curY === 2 && !tP[i+16]) movelist.push([i, i+16]);
-			}
-			if(tS === 2) { //black knight
+				break;
+			case 2:
 				if(curY > 1) {
 					if(curY > 2) {
 						if(curX < 8 && (!tP[i-17] || tP[i-17] > 6)) movelist.push([i, i-17]);
@@ -118,9 +131,9 @@ var perft = function(thisnode) {
 					if(curX < 7 && (!tP[i+10] || tP[i+10] > 6)) movelist.push([i, i+10]);
 					if(curX > 2 && (!tP[i+6] || tP[i+6] > 6)) movelist.push([i, i+6]);
 				}
+				break;
 			}
 		}
-
 	}
 	return movelist;
 }
@@ -162,12 +175,9 @@ var board = {
 		} else {
 			returnNode.enpassantSquare = -1;
 		}
-		if(fenparts[4] == +fenparts[4]) {
-			returnNode.drawClock = +fenparts[4];
-		}
-		if(fenparts[5] == +fenparts[5]) {
-			returnNode.moveNumber = +fenparts[5];
-		}
+		if(fenparts[4] == +fenparts[4]) returnNode.drawClock = +fenparts[4];
+		if(fenparts[5] == +fenparts[5]) returnNode.moveNumber = +fenparts[5];
+
 		return returnNode;
 	}
 };
@@ -231,5 +241,4 @@ $(document).delegate("#possible-moves li", "click", function() {
 	$(".tosq").removeClass("tosq");
 	$(".square").eq($(".sq1", $this).attr("data-square")).addClass("fromsq");
 	$(".square").eq($(".sq2", $this).attr("data-square")).addClass("tosq");
-
 });
