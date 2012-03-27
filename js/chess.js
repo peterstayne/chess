@@ -58,6 +58,10 @@ var node = function() {
 };
 
 var perft = function(thisnode) {
+
+	// perft is the name of a function in a chess program that returns a list of legal moves
+	// for a given board position (node)
+
 	var tS;
 	var i = 64;
 	var color = thisnode.move;
@@ -65,6 +69,7 @@ var perft = function(thisnode) {
 	var movelist = [];
 	var curX = 9;
 	var curY = 8;
+
 	while(i--) {
 
 		// curX and curY store rank/col information to avoid *'s and /'s
@@ -87,7 +92,7 @@ var perft = function(thisnode) {
 				if(curY && !tP[i-8]) movelist.push([i, i-8]);
 				if(curY === 7 && !tP[i-16]) movelist.push([i, i-16]);
 				break;
-			case 8:
+			case 8: // white knight
 				if(curY > 1) {
 					if(curY > 2) {
 						if(curX < 8 && tP[i-17] < 7) movelist.push([i, i-17]);
@@ -105,16 +110,31 @@ var perft = function(thisnode) {
 					if(curX > 2 && tP[i+6] < 7) movelist.push([i, i+6]);
 				}
 				break;
+			case 9: // white bishop
+				cX = curX;
+				cY = curY;
+				while(cX && cY) {
+					cX--; cY--;
+					// to-do...
+				}
+				break;
+			case 10: // black rook
+				break;
+			case 11: // black queen
+				break;
+			case 12: // black king
+				break;
 			}
 		} else {
 
 			// black
+
 			switch(tS) {
-			case 1:
+			case 1:  // black pawn
 				if(curY < 8 && !tP[i+8]) movelist.push([i, i+8]);
 				if(curY === 2 && !tP[i+16]) movelist.push([i, i+16]);
 				break;
-			case 2:
+			case 2:  // black knight
 				if(curY > 1) {
 					if(curY > 2) {
 						if(curX < 8 && (!tP[i-17] || tP[i-17] > 6)) movelist.push([i, i-17]);
@@ -131,6 +151,14 @@ var perft = function(thisnode) {
 					if(curX < 7 && (!tP[i+10] || tP[i+10] > 6)) movelist.push([i, i+10]);
 					if(curX > 2 && (!tP[i+6] || tP[i+6] > 6)) movelist.push([i, i+6]);
 				}
+				break;
+			case 3: // black bishop
+				break;
+			case 4: // black rook
+				break;
+			case 5: // black queen
+				break;
+			case 6: // black king
 				break;
 			}
 		}
