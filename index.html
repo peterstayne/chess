@@ -5,16 +5,36 @@
 <link rel="stylesheet" type="text/css" media="screen" href="css/style.css" />
 </head>
 <body>
-<div id="board-container" class="board-container">
-	<div id="board" class="board">
-	</div> 
+<div id="page">
+	<div id="board-container" class="board-container">
+		<div id="board" class="board">
+		</div> 
+	</div>
+	<div id="board-info" class="board-info">
+		<div id="turn" class="info-panel">
+		</div>
+		<div id="castle" class="info-panel">
+		</div>
+		<div id="enpassant" class="info-panel">
+		</div>
+		<div id="movenumber" class="info-panel">
+		</div>
+		<div id="drawclock" class="info-panel">
+		</div>
+		<div id="possible-moves" class="info-panel">
+			<p>Possible Moves</p>
+			<input type="button" id="do-perft" class="do-perft button-action" value="Find" />
+			<div id="movelist">
+			</div>
+		</div>
+	</div>
+	<div class="controlpanel">
+		<label for="fen">FEN</label>
+		<input type="text" size="80" id="fen" class="fen" value="rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2" />
+		<input type="button" value="submit" id="submitfen" />
+	</div>
 </div>
-<div class="controlpanel">
-	<label for="fen">FEN</label>
-	<input type="text" size="80" id="fen" class="fen" value="rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2" />
-	<input type="button" value="submit" id="submitfen" />
-</div>
-<script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+<script src="js/jquery-1.7.2.js"></script>
 <script src="js/chess.js"></script>
 </body>
 </html>

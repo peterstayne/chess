@@ -7,7 +7,7 @@ var sq = 0;
 for(var i = 0; i<8; i++) {
 	for(var r = 8; r; r--) {
 		algebraicSquares.symbols[algebraicSquares.ranks[i]+(9-r)] = sq;
-		algebraicSquares.numbers[sq] = algebraicSquares.ranks[i]+(9-r);
+		algebraicSquares.numbers[sq] = algebraicSquares.ranks[r-1]+(8-i);
 		sq++;
 	}
 }
@@ -57,11 +57,100 @@ var node = function() {
 	this.move = true;    // true = white, false = black
 };
 
+var perft = function(thisnode) {
+	var tS;
+	var i = 64;
+	var color = thisnode.move;
+	var tP = thisnode.position;
+	var movelist = [];
+	var curX = 9;
+	var curY = 8;
+	while(i--) {
 
+		curX--;
+		if(!curX) { curY--; curX = 8; }
+
+		tS = tP[i];
+		if(!tS || (color && tS < 7) || (!color && tS > 6)) continue;
+
+		if(color) {
+			if(tS === 7) { // white pawn
+				if(curY && !tP[i-8]) {  // 1 square move
+					movelist.push([i, i-8]);
+				}
+				if(curY === 7 && !tP[i-16]) {  // 2 square move from home
+					movelist.push([i, i-16]);
+				}
+			}
+			if(tS === 8) { //white knight
+				if(curY > 2 && curX < 8 && tP[i-17] < 7) {
+					movelist.push([i, i-17]);
+				}
+				if(curY > 2 && curX > 1 && tP[i-15] < 7) {
+					movelist.push([i, i-15]);	
+				}
+				if(curY > 1 && curX < 7 && tP[i-6] < 7) {
+					movelist.push([i, i-6]);
+				}
+				if(curY > 1 && curX > 2 && tP[i-10] < 7) {
+					movelist.push([i, i-10]);
+				}
+				if(curY < 7 && curX < 8 && tP[i+15] < 7) {
+					movelist.push([i, i+15])
+				}
+				if(curY < 7 && curX > 1 && tP[i+17] < 7) {
+					movelist.push([i, i+17])
+				}
+				if(curY < 8 && curX < 7 && tP[i+10] < 7) {
+					movelist.push([i, i+10]);
+				}
+				if(curY < 8 && curX > 2 && tP[i+6] < 7) {
+					movelist.push([i, i+6]);
+				}
+			}
+		} else {
+			if(tS === 1) {  // black pawn
+				if(curY < 8 && !tP[i+8]) {  // 1 square move
+					movelist.push([i, i+8]);
+				}
+				if(curY === 2 && !tP[i+16]) {  // 2 square move from home
+					movelist.push([i, i+16]);
+				}
+			}
+			if(tS === 2) { //black knight
+				if(curY > 2 && curX < 8 && (!tP[i-17] || tP[i-17] > 6)) {
+					movelist.push([i, i-17]);
+				}
+				if(curY > 2 && curX > 1 && (!tP[i-15] || tP[i-15] > 6)) {
+					movelist.push([i, i-15]);	
+				}
+				if(curY > 1 && curX < 7 && (!tP[i-6] || tP[i-6] > 6)) {
+					movelist.push([i, i-6]);
+				}
+				if(curY > 1 && curX > 2 && (!tP[i-10] || tP[i-10] > 6)) {
+					movelist.push([i, i-10]);
+				}
+				if(curY < 7 && curX < 8 && (!tP[i+15] || tP[i+15] > 6)) {
+					movelist.push([i, i+15])
+				}
+				if(curY < 7 && curX > 1 && (!tP[i+17] || tP[i+17] > 6)) {
+					movelist.push([i, i+17])
+				}
+				if(curY < 8 && curX < 7 && (!tP[i+10] || tP[i+10] > 6)) {
+					movelist.push([i, i+10]);
+				}
+				if(curY < 8 && curX > 2 && (!tP[i+6] || tP[i+6] > 6)) {
+					movelist.push([i, i+6]);
+				}
+			}
+		}
+
+	}
+	return movelist;
+}
 var board = {
 	parsefen: function(fen) {
 		var returnNode = new node();
-		$(".square").text(' ');
 		var fenparts = fen.split(" ");
 		positions = fenparts[0].split("/");
 		var row = 0;
@@ -107,6 +196,32 @@ var board = {
 	}
 };
 
+var updateBoard = function() {
+	var thisnode = $("#board").data("node")
+	var thisposition = thisnode.position;
+	var mark = 64;
+	if(thisnode.move) {
+		$("#turn").html("<p class=\"white\">White's Turn</p>");
+	} else {
+		$("#turn").html("<p class=\"black\">Black's Turn</p>");
+	}
+	$("#movenumber").html("<p class=\"info\">Move number: " + thisnode.moveNumber + "</p>");
+	$("#drawclock").html("<p class=\"info\">Draw clock: " + thisnode.drawClock + "</p>");
+	$("#enpassant").html("<p class=\"info\">En passant square: " + thisnode.enpassantSquare + "</p>");
+	var castle = '';
+	for(var i in thisnode.castle) {
+		castle += i + ' ';
+	}
+	$("#castle").html("<p class=\"info\">Castles: " + castle + "</p>");
+
+	while(mark--) {
+		thispiece = pieces.numbers[thisposition[mark]];
+		thisColor = (thispiece.toLowerCase() === thispiece) ? "pblack" : "pwhite";
+		$(".square").eq(mark).html("<span class=\"" + thisColor + "\">" + (thispiece != ' ' ? ucpieces[thispiece] : '&nbsp;') + "</span>");
+	}
+	return true;
+}
+
 $(document).ready(function(){
 	var html = '';
 	var b = true;
@@ -118,14 +233,27 @@ $(document).ready(function(){
 	html = '';
 
 	$("#submitfen").click(function() {
-		var thisnode = board.parsefen($("#fen").val());
-		var thisposition = thisnode.position;
-		var mark = 64;
-		while(mark--) {
-			thispiece = pieces.numbers[thisposition[mark]];
-			thisColor = (thispiece.toLowerCase() === thispiece) ? "pblack" : "pwhite";
-			$(".square").eq(mark).html("<span class=\"" + thisColor + "\">" + (thispiece != ' ' ? ucpieces[thispiece] : '&nbsp;') + "</span>");
-		}
+		$(".square").text(' ');
+		$("#board").data("node", board.parsefen($("#fen").val()));
+		updateBoard();
 	});
 	$("#submitfen").trigger('click');
+	$("#do-perft").click(function() {
+		var ml = perft( $("#board").data("node") );
+		var mlhtml = '<ul>';
+		for(var i in ml) {
+			mlhtml += '<li><span class="sq1" data-square="' + ml[i][0] + '">' + algebraicSquares.numbers[ml[i][0]] + '</span> -> <span class="sq2" data-square="' + ml[i][1] + '">' + algebraicSquares.numbers[ml[i][1]] + '</span></li>';
+		}
+		mlhtml += '</ul>';
+		$("#movelist").html(mlhtml);
+	});
+});
+
+$(document).delegate("#possible-moves li", "click", function() {
+	var $this = $(this);
+	$(".fromsq").removeClass("fromsq");
+	$(".tosq").removeClass("tosq");
+	$(".square").eq($(".sq1", $this).attr("data-square")).addClass("fromsq");
+	$(".square").eq($(".sq2", $this).attr("data-square")).addClass("tosq");
+
 });
