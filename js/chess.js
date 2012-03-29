@@ -161,6 +161,54 @@ var perft = function(thisnode) {
 				}
 				break;
 			case 10: // black rook
+				cS = i; cX = curX-1; stop = false;
+				while(cX && !stop) {
+					cS -= 1; cX -=1;
+					if(!tP[cS]) {
+						movelist.push([i, cS]);
+					} else if(tP[cS] && tP[cS] < 7) {
+						movelist.push([i, cS]);
+						stop = true;
+					} else {
+						stop = true;
+					}
+				}
+				cS = i; cX = curX+1; stop = false;
+				while(cX < 9 && !stop) {
+					cS += 1; cX +=1;
+					if(!tP[cS]) {
+						movelist.push([i, cS]);
+					} else if(tP[cS] && tP[cS] < 7) {
+						movelist.push([i, cS]);
+						stop = true;
+					} else {
+						stop = true;
+					}
+				}
+				cS = i; cY = curY-1; stop = false;
+				while(cY && !stop) {
+					cS -= 8; cY -=1;
+					if(!tP[cS]) {
+						movelist.push([i, cS]);
+					} else if(tP[cS] && tP[cS] < 7) {
+						movelist.push([i, cS]);
+						stop = true;
+					} else {
+						stop = true;
+					}
+				}
+				cS = i; cY = curY+1; stop = false;
+				while(cY < 9 && !stop) {
+					cS += 8; cY +=1;
+					if(!tP[cS]) {
+						movelist.push([i, cS]);
+					} else if(tP[cS] && tP[cS] < 7) {
+						movelist.push([i, cS]);
+						stop = true;
+					} else {
+						stop = true;
+					}
+				}
 				break;
 			case 11: // black queen
 				break;
@@ -208,7 +256,7 @@ var perft = function(thisnode) {
 					}
 				}
 				cS = i; cX = curX+1; cY = curY-1; stop = false;
-				while(cX < 9 && cY > 0 && !stop) {
+				while(cX < 9 && cY && !stop) {
 					cS -= 7; cX +=1; cY -=1;
 					if(!tP[cS]) {
 						movelist.push([i, cS]);
@@ -220,7 +268,7 @@ var perft = function(thisnode) {
 					}
 				}
 				cS = i; cX = curX-1; cY = curY+1; stop = false;
-				while(cX > 0 && cY < 9 && !stop) {
+				while(cX && cY < 9 && !stop) {
 					cS += 7; cX -=1; cY +=1;
 					if(!tP[cS]) {
 						movelist.push([i, cS]);
@@ -245,6 +293,54 @@ var perft = function(thisnode) {
 				}
 				break;
 			case 4: // black rook
+				cS = i; cX = curX-1; stop = false;
+				while(cX && !stop) {
+					cS -= 1; cX -=1;
+					if(!tP[cS]) {
+						movelist.push([i, cS]);
+					} else if(tP[cS] > 6) {
+						movelist.push([i, cS]);
+						stop = true;
+					} else {
+						stop = true;
+					}
+				}
+				cS = i; cX = curX+1; stop = false;
+				while(cX < 9 && !stop) {
+					cS += 1; cX +=1;
+					if(!tP[cS]) {
+						movelist.push([i, cS]);
+					} else if(tP[cS] > 6) {
+						movelist.push([i, cS]);
+						stop = true;
+					} else {
+						stop = true;
+					}
+				}
+				cS = i; cY = curY-1; stop = false;
+				while(cY && !stop) {
+					cS -= 8; cY -=1;
+					if(!tP[cS]) {
+						movelist.push([i, cS]);
+					} else if(tP[cS] > 6) {
+						movelist.push([i, cS]);
+						stop = true;
+					} else {
+						stop = true;
+					}
+				}
+				cS = i; cY = curY+1; stop = false;
+				while(cY < 9 && !stop) {
+					cS += 8; cY +=1;
+					if(!tP[cS]) {
+						movelist.push([i, cS]);
+					} else if(tP[cS] > 6) {
+						movelist.push([i, cS]);
+						stop = true;
+					} else {
+						stop = true;
+					}
+				}
 				break;
 			case 5: // black queen
 				break;
