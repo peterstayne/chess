@@ -111,11 +111,53 @@ var perft = function(thisnode) {
 				}
 				break;
 			case 9: // white bishop
-				cX = curX;
-				cY = curY;
-				while(cX && cY) {
-					cX--; cY--;
-					// to-do...
+				cS = i; cX = curX-1; cY = curY-1; stop = false;
+				while(cX > 0 && cY > 0 && !stop) {
+					cS -= 9; cX -=1; cY -=1;
+					if(!tP[cS]) {
+						movelist.push([i, cS]);
+					} else if(tP[cS] && tP[cS] < 7) {
+						movelist.push([i, cS]);
+						stop = true;
+					} else {
+						stop = true;
+					}
+				}
+				cS = i; cX = curX+1; cY = curY-1; stop = false;
+				while(cX < 9 && cY > 0 && !stop) {
+					cS -= 7; cX +=1; cY -=1;
+					if(!tP[cS]) {
+						movelist.push([i, cS]);
+					} else if(tP[cS] && tP[cS] < 7) {
+						movelist.push([i, cS]);
+						stop = true;
+					} else {
+						stop = true;
+					}
+				}
+				cS = i; cX = curX-1; cY = curY+1; stop = false;
+				while(cX > 0 && cY < 9 && !stop) {
+					cS += 7; cX -=1; cY +=1;
+					if(!tP[cS]) {
+						movelist.push([i, cS]);
+					} else if(tP[cS] && tP[cS] < 7) {
+						movelist.push([i, cS]);
+						stop = true;
+					} else {
+						stop = true;
+					}
+				}
+				cS = i; cX = curX+1; cY = curY+1; stop = false;
+				while(cX < 9 && cY < 9 && !stop) {
+					cS += 9; cX +=1; cY +=1;
+					if(!tP[cS]) {
+						movelist.push([i, cS]);
+					} else if(tP[cS] && tP[cS] < 7) {
+						movelist.push([i, cS]);
+						stop = true;
+					} else {
+						stop = true;
+					}
 				}
 				break;
 			case 10: // black rook
@@ -153,6 +195,54 @@ var perft = function(thisnode) {
 				}
 				break;
 			case 3: // black bishop
+				cS = i; cX = curX-1; cY = curY-1; stop = false;
+				while(cX > 0 && cY > 0 && !stop) {
+					cS -= 9; cX -=1; cY -=1;
+					if(!tP[cS]) {
+						movelist.push([i, cS]);
+					} else if(tP[cS] > 6) {
+						movelist.push([i, cS]);
+						stop = true;
+					} else {
+						stop = true;
+					}
+				}
+				cS = i; cX = curX+1; cY = curY-1; stop = false;
+				while(cX < 9 && cY > 0 && !stop) {
+					cS -= 7; cX +=1; cY -=1;
+					if(!tP[cS]) {
+						movelist.push([i, cS]);
+					} else if(tP[cS] > 6) {
+						movelist.push([i, cS]);
+						stop = true;
+					} else {
+						stop = true;
+					}
+				}
+				cS = i; cX = curX-1; cY = curY+1; stop = false;
+				while(cX > 0 && cY < 9 && !stop) {
+					cS += 7; cX -=1; cY +=1;
+					if(!tP[cS]) {
+						movelist.push([i, cS]);
+					} else if(tP[cS] > 6) {
+						movelist.push([i, cS]);
+						stop = true;
+					} else {
+						stop = true;
+					}
+				}
+				cS = i; cX = curX+1; cY = curY+1; stop = false;
+				while(cX < 9 && cY < 9 && !stop) {
+					cS += 9; cX +=1; cY +=1;
+					if(!tP[cS]) {
+						movelist.push([i, cS]);
+					} else if(tP[cS] > 6) {
+						movelist.push([i, cS]);
+						stop = true;
+					} else {
+						stop = true;
+					}
+				}
 				break;
 			case 4: // black rook
 				break;
