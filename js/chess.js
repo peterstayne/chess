@@ -97,7 +97,6 @@ var perft = function(thisnode) {
 
 		tS = tP[i];
 		if(!tS || (color && tS < 7) || (!color && tS > 6)) continue;
-		console.log(i, curX, curY);
 		if(color) {
 
 			// white
@@ -323,7 +322,19 @@ var perft = function(thisnode) {
 					}
 				}
 				break;
-			case 12: // black king
+			case 12: // white king
+				if(curX > 1) {
+					if(thisnode.isBorE(i-1)) movelist.push([i, i-1]);
+					if(curY > 1 && thisnode.isBorE(i-9)) movelist.push([i, i-9]);
+					if(curY < 8 && thisnode.isBorE(i+7)) movelist.push([i, i+7]);
+				}
+				if(curY < 8 && thisnode.isBorE(i+8)) movelist.push([i, i+8]);
+				if(curY > 1 && thisnode.isBorE(i-8)) movelist.push([i, i-8]);
+				if(curX < 8) {
+					if(thisnode.isBorE(i+1)) movelist.push([i, i+1]);
+					if(curY > 1 && thisnode.isBorE(i-7)) movelist.push([i, i-7]);
+					if(curY < 8 && thisnode.isBorE(i+9)) movelist.push([i, i+9]);
+				}
 				break;
 			}
 		} else {
@@ -552,6 +563,18 @@ var perft = function(thisnode) {
 				}
 				break;
 			case 6: // black king
+				if(curX > 1) {
+					if(thisnode.isWorE(i-1)) movelist.push([i, i-1]);
+					if(curY > 1 && thisnode.isWorE(i-9)) movelist.push([i, i-9]);
+					if(curY < 8 && thisnode.isWorE(i+7)) movelist.push([i, i+7]);
+				}
+				if(curY > 1 && thisnode.isWorE(i-8)) movelist.push([i, i-8]);
+				if(curY < 8 && thisnode.isWorE(i+8)) movelist.push([i, i+8]);
+				if(curX < 8) {
+					if(thisnode.isWorE(i+1)) movelist.push([i, i+1]);
+					if(curY > 1 && thisnode.isWorE(i-7)) movelist.push([i, i-7]);
+					if(curY < 8 && thisnode.isWorE(i+9)) movelist.push([i, i+9]);
+				}
 				break;
 			}
 		}
@@ -647,7 +670,6 @@ $(document).ready(function(){
 	$("#submitfen").trigger('click');
 	$("#do-random").click(function() {
 		var curnode = $("#board").data("node");
-		console.log(curnode);
 		var ml = perft( curnode );
 		var themove = ml[~~(Math.random() * ml.length)];
 		curnode.position[themove[1]] = curnode.position[themove[0]];
