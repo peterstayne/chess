@@ -3,14 +3,17 @@ var algebraicSquares = {
 	symbols: {},
 	numbers: []
 };
+var coords = [];
 var sq = 0;
 for(var i = 0; i<8; i++) {
 	for(var r = 8; r; r--) {
 		algebraicSquares.symbols[algebraicSquares.ranks[i]+(9-r)] = sq;
 		algebraicSquares.numbers[sq] = algebraicSquares.ranks[r-1]+(8-i);
+		coords[sq] = [i, 8-r];
 		sq++;
 	}
 }
+
 var ucpieces = {
 	p: '&#9823;',
 	n: '&#9822;',
@@ -50,6 +53,18 @@ var node = function() {
 		K: false,
 		Q: false
 	};
+	this.isBorE = function(square) {
+		return (this.position[square] < 7);
+	};
+	this.isWorE = function(square) {
+		return (!this.position[square] || this.position[square] > 6);
+	};
+	this.isB = function(square) {
+		return (this.position[square] && this.position[square] < 7);
+	};
+	this.isW = function(square) {
+		return (this.position[square] > 6);
+	};
 	this.drawClock = 0;
 	this.moveNumber = 1;
 	this.enpassantSquare = '-';
@@ -82,7 +97,7 @@ var perft = function(thisnode) {
 
 		tS = tP[i];
 		if(!tS || (color && tS < 7) || (!color && tS > 6)) continue;
-
+		console.log(i, curX, curY);
 		if(color) {
 
 			// white
@@ -90,24 +105,24 @@ var perft = function(thisnode) {
 			switch(tS) {
 			case 7: // white pawn
 				if(curY && !tP[i-8]) movelist.push([i, i-8]);
-				if(curY === 7 && !tP[i-16]) movelist.push([i, i-16]);
+				if(curY === 7 && !tP[i-16] && !tP[i-8]) movelist.push([i, i-16]);
 				break;
 			case 8: // white knight
 				if(curY > 1) {
 					if(curY > 2) {
-						if(curX < 8 && tP[i-17] < 7) movelist.push([i, i-17]);
-						if(curX > 1 && tP[i-15] < 7) movelist.push([i, i-15]);
+						if(curX > 1 && thisnode.isBorE(i-17)) movelist.push([i, i-17]);
+						if(curX < 8 && thisnode.isBorE(i-15)) movelist.push([i, i-15]);
 					}
-					if(curX < 7 && tP[i-6] < 7) movelist.push([i, i-6]);
-					if(curX > 2 && tP[i-10] < 7) movelist.push([i, i-10]);
+					if(curX < 7 && thisnode.isBorE(i-6)) movelist.push([i, i-6]);
+					if(curX > 2 && thisnode.isBorE(i-10)) movelist.push([i, i-10]);
 				}
 				if(curY < 8) {
 					if(curY < 7) {
-						if(curX < 8 && tP[i+15] < 7) movelist.push([i, i+15]);
-						if(curX > 1 && tP[i+17] < 7) movelist.push([i, i+17]);
+						if(curX > 1 && thisnode.isBorE(i+15)) movelist.push([i, i+15]);
+						if(curX < 8 && thisnode.isBorE(i+17)) movelist.push([i, i+17]);
 					}
-					if(curX < 7 && tP[i+10] < 7) movelist.push([i, i+10]);
-					if(curX > 2 && tP[i+6] < 7) movelist.push([i, i+6]);
+					if(curX < 7 && thisnode.isBorE(i+10)) movelist.push([i, i+10]);
+					if(curX > 2 && thisnode.isBorE(i+6)) movelist.push([i, i+6]);
 				}
 				break;
 			case 9: // white bishop
@@ -211,6 +226,102 @@ var perft = function(thisnode) {
 				}
 				break;
 			case 11: // black queen
+				cS = i; cX = curX-1; cY = curY-1; stop = false;
+				while(cX > 0 && cY > 0 && !stop) {
+					cS -= 9; cX -=1; cY -=1;
+					if(!tP[cS]) {
+						movelist.push([i, cS]);
+					} else if(tP[cS] && tP[cS] < 7) {
+						movelist.push([i, cS]);
+						stop = true;
+					} else {
+						stop = true;
+					}
+				}
+				cS = i; cX = curX+1; cY = curY-1; stop = false;
+				while(cX < 9 && cY > 0 && !stop) {
+					cS -= 7; cX +=1; cY -=1;
+					if(!tP[cS]) {
+						movelist.push([i, cS]);
+					} else if(tP[cS] && tP[cS] < 7) {
+						movelist.push([i, cS]);
+						stop = true;
+					} else {
+						stop = true;
+					}
+				}
+				cS = i; cX = curX-1; cY = curY+1; stop = false;
+				while(cX > 0 && cY < 9 && !stop) {
+					cS += 7; cX -=1; cY +=1;
+					if(!tP[cS]) {
+						movelist.push([i, cS]);
+					} else if(tP[cS] && tP[cS] < 7) {
+						movelist.push([i, cS]);
+						stop = true;
+					} else {
+						stop = true;
+					}
+				}
+				cS = i; cX = curX+1; cY = curY+1; stop = false;
+				while(cX < 9 && cY < 9 && !stop) {
+					cS += 9; cX +=1; cY +=1;
+					if(!tP[cS]) {
+						movelist.push([i, cS]);
+					} else if(tP[cS] && tP[cS] < 7) {
+						movelist.push([i, cS]);
+						stop = true;
+					} else {
+						stop = true;
+					}
+				}
+				cS = i; cX = curX-1; stop = false;
+				while(cX && !stop) {
+					cS -= 1; cX -=1;
+					if(!tP[cS]) {
+						movelist.push([i, cS]);
+					} else if(tP[cS] && tP[cS] < 7) {
+						movelist.push([i, cS]);
+						stop = true;
+					} else {
+						stop = true;
+					}
+				}
+				cS = i; cX = curX+1; stop = false;
+				while(cX < 9 && !stop) {
+					cS += 1; cX +=1;
+					if(!tP[cS]) {
+						movelist.push([i, cS]);
+					} else if(tP[cS] && tP[cS] < 7) {
+						movelist.push([i, cS]);
+						stop = true;
+					} else {
+						stop = true;
+					}
+				}
+				cS = i; cY = curY-1; stop = false;
+				while(cY && !stop) {
+					cS -= 8; cY -=1;
+					if(!tP[cS]) {
+						movelist.push([i, cS]);
+					} else if(tP[cS] && tP[cS] < 7) {
+						movelist.push([i, cS]);
+						stop = true;
+					} else {
+						stop = true;
+					}
+				}
+				cS = i; cY = curY+1; stop = false;
+				while(cY < 9 && !stop) {
+					cS += 8; cY +=1;
+					if(!tP[cS]) {
+						movelist.push([i, cS]);
+					} else if(tP[cS] && tP[cS] < 7) {
+						movelist.push([i, cS]);
+						stop = true;
+					} else {
+						stop = true;
+					}
+				}
 				break;
 			case 12: // black king
 				break;
@@ -222,24 +333,24 @@ var perft = function(thisnode) {
 			switch(tS) {
 			case 1:  // black pawn
 				if(curY < 8 && !tP[i+8]) movelist.push([i, i+8]);
-				if(curY === 2 && !tP[i+16]) movelist.push([i, i+16]);
+				if(curY === 2 && !tP[i+16] && !tP[i+8]) movelist.push([i, i+16]);
 				break;
 			case 2:  // black knight
 				if(curY > 1) {
 					if(curY > 2) {
-						if(curX < 8 && (!tP[i-17] || tP[i-17] > 6)) movelist.push([i, i-17]);
-						if(curX > 1 && (!tP[i-15] || tP[i-15] > 6)) movelist.push([i, i-15]);	
+						if(curX > 1 && thisnode.isWorE(i-17)) movelist.push([i, i-17]);
+						if(curX < 8 && thisnode.isWorE(i-15)) movelist.push([i, i-15]);
 					}
-					if(curX < 7 && (!tP[i-6] || tP[i-6] > 6)) movelist.push([i, i-6]);
-					if(curX > 2 && (!tP[i-10] || tP[i-10] > 6)) movelist.push([i, i-10]);
+					if(curX < 7 && thisnode.isWorE(i-6)) movelist.push([i, i-6]);
+					if(curX > 2 && thisnode.isWorE(i-10)) movelist.push([i, i-10]);
 				}
 				if(curY < 8) {
 					if(curY < 7) {
-						if(curX < 8 && (!tP[i+15] || tP[i+15] > 6)) movelist.push([i, i+15]);
-						if(curX > 1 && (!tP[i+17] || tP[i+17] > 6)) movelist.push([i, i+17]);
+						if(curX > 1 && thisnode.isWorE(i+15)) movelist.push([i, i+15]);
+						if(curX < 8 && thisnode.isWorE(i+17)) movelist.push([i, i+17]);
 					}
-					if(curX < 7 && (!tP[i+10] || tP[i+10] > 6)) movelist.push([i, i+10]);
-					if(curX > 2 && (!tP[i+6] || tP[i+6] > 6)) movelist.push([i, i+6]);
+					if(curX < 7 && thisnode.isWorE(i+10)) movelist.push([i, i+10]);
+					if(curX > 2 && thisnode.isWorE(i+6)) movelist.push([i, i+6]);
 				}
 				break;
 			case 3: // black bishop
@@ -343,6 +454,102 @@ var perft = function(thisnode) {
 				}
 				break;
 			case 5: // black queen
+				cS = i; cX = curX-1; cY = curY-1; stop = false;
+				while(cX > 0 && cY > 0 && !stop) {
+					cS -= 9; cX -=1; cY -=1;
+					if(!tP[cS]) {
+						movelist.push([i, cS]);
+					} else if(tP[cS] > 6) {
+						movelist.push([i, cS]);
+						stop = true;
+					} else {
+						stop = true;
+					}
+				}
+				cS = i; cX = curX+1; cY = curY-1; stop = false;
+				while(cX < 9 && cY && !stop) {
+					cS -= 7; cX +=1; cY -=1;
+					if(!tP[cS]) {
+						movelist.push([i, cS]);
+					} else if(tP[cS] > 6) {
+						movelist.push([i, cS]);
+						stop = true;
+					} else {
+						stop = true;
+					}
+				}
+				cS = i; cX = curX-1; cY = curY+1; stop = false;
+				while(cX && cY < 9 && !stop) {
+					cS += 7; cX -=1; cY +=1;
+					if(!tP[cS]) {
+						movelist.push([i, cS]);
+					} else if(tP[cS] > 6) {
+						movelist.push([i, cS]);
+						stop = true;
+					} else {
+						stop = true;
+					}
+				}
+				cS = i; cX = curX+1; cY = curY+1; stop = false;
+				while(cX < 9 && cY < 9 && !stop) {
+					cS += 9; cX +=1; cY +=1;
+					if(!tP[cS]) {
+						movelist.push([i, cS]);
+					} else if(tP[cS] > 6) {
+						movelist.push([i, cS]);
+						stop = true;
+					} else {
+						stop = true;
+					}
+				}
+				cS = i; cX = curX-1; stop = false;
+				while(cX && !stop) {
+					cS -= 1; cX -=1;
+					if(!tP[cS]) {
+						movelist.push([i, cS]);
+					} else if(tP[cS] > 6) {
+						movelist.push([i, cS]);
+						stop = true;
+					} else {
+						stop = true;
+					}
+				}
+				cS = i; cX = curX+1; stop = false;
+				while(cX < 9 && !stop) {
+					cS += 1; cX +=1;
+					if(!tP[cS]) {
+						movelist.push([i, cS]);
+					} else if(tP[cS] > 6) {
+						movelist.push([i, cS]);
+						stop = true;
+					} else {
+						stop = true;
+					}
+				}
+				cS = i; cY = curY-1; stop = false;
+				while(cY && !stop) {
+					cS -= 8; cY -=1;
+					if(!tP[cS]) {
+						movelist.push([i, cS]);
+					} else if(tP[cS] > 6) {
+						movelist.push([i, cS]);
+						stop = true;
+					} else {
+						stop = true;
+					}
+				}
+				cS = i; cY = curY+1; stop = false;
+				while(cY < 9 && !stop) {
+					cS += 8; cY +=1;
+					if(!tP[cS]) {
+						movelist.push([i, cS]);
+					} else if(tP[cS] > 6) {
+						movelist.push([i, cS]);
+						stop = true;
+					} else {
+						stop = true;
+					}
+				}
 				break;
 			case 6: // black king
 				break;
