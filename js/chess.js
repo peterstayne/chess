@@ -604,7 +604,7 @@ var board = {
 };
 
 var updateBoard = function() {
-	var thisnode = $("#board").data("node")
+	var thisnode = $("#board").data("node");
 	var thisposition = thisnode.position;
 	var mark = 64;
 	if(thisnode.move) {
@@ -645,6 +645,17 @@ $(document).ready(function(){
 		updateBoard();
 	});
 	$("#submitfen").trigger('click');
+	$("#do-random").click(function() {
+		var curnode = $("#board").data("node");
+		console.log(curnode);
+		var ml = perft( curnode );
+		var themove = ml[~~(Math.random() * ml.length)];
+		curnode.position[themove[1]] = curnode.position[themove[0]];
+		curnode.position[themove[0]] = 0;
+		curnode.move = !curnode.move;
+		$("#board").data("node", curnode);
+		updateBoard();
+	});
 	$("#do-perft").click(function() {
 		var ml = perft( $("#board").data("node") );
 		var mlhtml = '<ul>';
