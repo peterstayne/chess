@@ -105,6 +105,10 @@ var perft = function(thisnode) {
 			case 7: // white pawn
 				if(curY && !tP[i-8]) movelist.push([i, i-8]);
 				if(curY === 7 && !tP[i-16] && !tP[i-8]) movelist.push([i, i-16]);
+				if(curY > 1) {
+					if(curX < 8 && thisnode.isB(i-7)) movelist.push([i, i-7]);
+					if(curX > 1 && thisnode.isB(i-9)) movelist.push([i, i-9]);
+				}
 				break;
 			case 8: // white knight
 				if(curY > 1) {
@@ -345,6 +349,10 @@ var perft = function(thisnode) {
 			case 1:  // black pawn
 				if(curY < 8 && !tP[i+8]) movelist.push([i, i+8]);
 				if(curY === 2 && !tP[i+16] && !tP[i+8]) movelist.push([i, i+16]);
+				if(curY < 8) {
+					if(curX < 8 && thisnode.isW(i-7)) movelist.push([i, i-7]);
+					if(curX > 1 && thisnode.isW(i-9)) movelist.push([i, i-9]);
+				}
 				break;
 			case 2:  // black knight
 				if(curY > 1) {
