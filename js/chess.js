@@ -660,6 +660,25 @@ var updateBoard = function() {
 	return true;
 }
 
+function isCheck(curnode, color) {
+	if(color) {
+		var sq = 64;
+		while(sq-- && curnode.position[sq] != 12) { }
+		// check knights
+		// save for later
+	}
+}
+
+function domove(curnode, themove) {
+	curnode.position[themove[1]] = curnode.position[themove[0]];
+	curnode.position[themove[0]] = 0;
+	if(themove.length > 2) {
+		console.log('omg more stuff!');
+	}
+	curnode.move = !curnode.move;
+	return curnode;
+}
+
 $(document).ready(function(){
 	var html = '';
 	var b = true;
@@ -680,9 +699,7 @@ $(document).ready(function(){
 		var curnode = $("#board").data("node");
 		var ml = perft( curnode );
 		var themove = ml[~~(Math.random() * ml.length)];
-		curnode.position[themove[1]] = curnode.position[themove[0]];
-		curnode.position[themove[0]] = 0;
-		curnode.move = !curnode.move;
+		curnode = domove(curnode, themove);
 		$("#board").data("node", curnode);
 		updateBoard();
 	});
