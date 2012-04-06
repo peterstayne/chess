@@ -685,7 +685,10 @@ function domove(curnode, themove) {
 	curnode.position[themove[1]] = curnode.position[themove[0]];
 	curnode.position[themove[0]] = 0;
 	if(themove.length > 2) {
-		console.log('omg more stuff!');
+		switch(ml[i][2]) {
+		case "promote":
+			curnode.position[themove[1]] = themove[3];
+		}
 	}
 	curnode.move = !curnode.move;
 	return curnode;
