@@ -103,7 +103,13 @@ var perft = function(thisnode) {
 
 			switch(tS) {
 			case 7: // white pawn
-				if(curY && !tP[i-8]) movelist.push([i, i-8]);
+				if(curY > 2 && !tP[i-8]) movelist.push([i, i-8]);
+				if(curY === 2 && !tP[i-8]) {
+					movelist.push([i, i-8, "promote", 8]);
+					movelist.push([i, i-8, "promote", 9]);
+					movelist.push([i, i-8, "promote", 10]);
+					movelist.push([i, i-8, "promote", 11]);
+				}
 				if(curY === 7 && !tP[i-16] && !tP[i-8]) movelist.push([i, i-16]);
 				if(curY > 1) {
 					if(curX < 8 && thisnode.isB(i-7)) movelist.push([i, i-7]);
@@ -347,7 +353,13 @@ var perft = function(thisnode) {
 
 			switch(tS) {
 			case 1:  // black pawn
-				if(curY < 8 && !tP[i+8]) movelist.push([i, i+8]);
+				if(curY < 7 && !tP[i+8]) movelist.push([i, i+8]);
+				if(curY === 7 && !tP[i+8]) {
+					movelist.push([i, i+8, "promote", 2]);
+					movelist.push([i, i+8, "promote", 3]);
+					movelist.push([i, i+8, "promote", 4]);
+					movelist.push([i, i+8, "promote", 5]);
+				}
 				if(curY === 2 && !tP[i+16] && !tP[i+8]) movelist.push([i, i+16]);
 				if(curY < 8) {
 					if(curX < 8 && thisnode.isW(i-7)) movelist.push([i, i-7]);
@@ -707,7 +719,16 @@ $(document).ready(function(){
 		var ml = perft( $("#board").data("node") );
 		var mlhtml = '<ul>';
 		for(var i in ml) {
-			mlhtml += '<li><span class="sq1" data-square="' + ml[i][0] + '">' + algebraicSquares.numbers[ml[i][0]] + '</span> -> <span class="sq2" data-square="' + ml[i][1] + '">' + algebraicSquares.numbers[ml[i][1]] + '</span></li>';
+			mlhtml += '<li>';
+			mlhtml += '<span class="sq1" data-square="' + ml[i][0] + '">' + algebraicSquares.numbers[ml[i][0]] + '</span>';
+			mlhtml += ' -> <span class="sq2" data-square="' + ml[i][1] + '">' + algebraicSquares.numbers[ml[i][1]] + '</span>';
+			if(ml[i].length > 2) {
+				switch(ml[i][2]) {
+				case "promote":
+					mlhtml += ' = ' + ucpieces[pieces.numbers[ml[i][3]]];
+				}
+			}
+			mlhtml += '</li>';
 		}
 		mlhtml += '</ul>';
 		$("#movelist").html(mlhtml);
