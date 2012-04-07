@@ -663,7 +663,8 @@ var updateBoard = function() {
 		castle += i + ' ';
 	}
 	$("#castle").html("<p class=\"info\">Castles: " + castle + "</p>");
-
+	$("#movelist ul").html('');
+	updateMoveList();
 	while(mark--) {
 		thispiece = pieces.numbers[thisposition[mark]];
 		thisColor = (thispiece.toLowerCase() === thispiece) ? "pblack" : "pwhite";
@@ -672,7 +673,7 @@ var updateBoard = function() {
 	return true;
 }
 
-function isCheck(curnode, color) {
+var isCheck = function(curnode, color) {
 	if(color) {
 		var sq = 64;
 		while(sq-- && curnode.position[sq] != 12) { }
@@ -681,17 +682,36 @@ function isCheck(curnode, color) {
 	}
 }
 
-function domove(curnode, themove) {
+var domove = function(curnode, themove) {
 	curnode.position[themove[1]] = curnode.position[themove[0]];
 	curnode.position[themove[0]] = 0;
 	if(themove.length > 2) {
-		switch(ml[i][2]) {
+		switch(themove[2]) {
 		case "promote":
 			curnode.position[themove[1]] = themove[3];
 		}
 	}
 	curnode.move = !curnode.move;
 	return curnode;
+}
+
+var updateMoveList = function() {
+	var ml = perft( $("#board").data("node") );
+	var mlhtml = '<ul>';
+	for(var i in ml) {
+		mlhtml += '<li data-perftid="' + i + '">';
+		mlhtml += '<span class="sq1" data-square="' + ml[i][0] + '">' + algebraicSquares.numbers[ml[i][0]] + '</span>';
+		mlhtml += ' -> <span class="sq2" data-square="' + ml[i][1] + '">' + algebraicSquares.numbers[ml[i][1]] + '</span>';
+		if(ml[i].length > 2) {
+			switch(ml[i][2]) {
+			case "promote":
+				mlhtml += ' = ' + ucpieces[pieces.numbers[ml[i][3]]];
+			}
+		}
+		mlhtml += '</li>';
+	}
+	mlhtml += '</ul>';
+	$("#movelist").html(mlhtml);
 }
 
 $(document).ready(function(){
@@ -718,30 +738,12 @@ $(document).ready(function(){
 		$("#board").data("node", curnode);
 		updateBoard();
 	});
-	$("#do-perft").click(function() {
-		var ml = perft( $("#board").data("node") );
-		var mlhtml = '<ul>';
-		for(var i in ml) {
-			mlhtml += '<li>';
-			mlhtml += '<span class="sq1" data-square="' + ml[i][0] + '">' + algebraicSquares.numbers[ml[i][0]] + '</span>';
-			mlhtml += ' -> <span class="sq2" data-square="' + ml[i][1] + '">' + algebraicSquares.numbers[ml[i][1]] + '</span>';
-			if(ml[i].length > 2) {
-				switch(ml[i][2]) {
-				case "promote":
-					mlhtml += ' = ' + ucpieces[pieces.numbers[ml[i][3]]];
-				}
-			}
-			mlhtml += '</li>';
-		}
-		mlhtml += '</ul>';
-		$("#movelist").html(mlhtml);
-	});
+	$("#do-perft").click(updateMoveList);
 });
 
 $(document).delegate("#possible-moves li", "click", function() {
-	var $this = $(this);
-	$(".fromsq").removeClass("fromsq");
-	$(".tosq").removeClass("tosq");
-	$(".square").eq($(".sq1", $this).attr("data-square")).addClass("fromsq");
-	$(".square").eq($(".sq2", $this).attr("data-square")).addClass("tosq");
+	var thisnode = $("#board").data("node");
+	thisnode = domove(thisnode, perft(thisnode)[$(this).attr("data-perftid")]);
+	$("#board").data("node", thisnode);
+	updateBoard();
 });

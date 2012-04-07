@@ -66,16 +66,14 @@ input[type=text] {
 	width: 400px;
 }
 input[type=button] {
-	width: 55px;
+	width: 95px;
 	height: 19px;
 	margin: 10px 0 0 0;
 }
 #page {
 	width: 900px;
 	margin: 10px auto;
-	background-color: #112244;
 	height: 1000px;
-	border: 1px solid #223366;
 }
 .board-info {
 	width: 340px;
