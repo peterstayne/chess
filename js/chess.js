@@ -740,6 +740,7 @@ var updateMoveList = function() {
 	var mlhtml = '<ul>';
 	for(var i in ml) {
 		mlhtml += '<li data-perftid="' + i + '">';
+		mlhtml += ucpieces[pieces.numbers[curnode.position[ml[i][0]]]];
 		mlhtml += '<span class="sq1" data-square="' + ml[i][0] + '">' + algebraicSquares.numbers[ml[i][0]] + '</span>';
 		if(curnode.position[ml[i][1]]) {
 			mlhtml += 'x';
@@ -798,7 +799,6 @@ $(document).ready(function(){
 				}
 			}
 			if(themove) {
-				$(".fromsq").removeClass("fromsq");
 				curnode = domove(curnode, ml[themove]);
 				$("#board").data("node", curnode);
 				updateBoard();

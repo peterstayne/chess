@@ -43,6 +43,9 @@ body {
 	text-align: center;
 	line-height: 59px;
 }
+.square:hover {
+	background-color: #009900;
+}
 .square span {
 	font-size: 46px;
 	font-weight: 800;
@@ -95,8 +98,9 @@ input[type=button] {
 	border: 1px solid #4444ff;
 }
 #possible-moves {
-	height: 500px;
+	height: 650px;
 	overflow-y: auto;
+	width: 140px;
 }
 #possible-moves li {
 	list-style-position: outer;
@@ -106,6 +110,22 @@ input[type=button] {
 	font-family: courier;
 }
 #possible-moves li:hover {
+	background-color: #665500;
+	cursor: pointer;
+}
+#game-moves {
+	height: 650px;
+	overflow-y: auto;
+	width: 165px;
+}
+#game-moves li {
+	list-style-position: outer;
+	font-family: courier;
+}
+#game-moves li span {
+	font-family: courier;
+}
+#game-moves li:hover {
 	background-color: #665500;
 	cursor: pointer;
 }
