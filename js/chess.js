@@ -103,19 +103,33 @@ var perft = function(thisnode) {
 
 			switch(tS) {
 			case 7: // white pawn
+				// 1 square forward
 				if(curY > 2 && !tP[i-8]) movelist.push([i, i-8]);
+				// en passant
+				if(curY === 4) {
+					if(curX > 1 && i-9 == thisnode.enpassantSquare) {
+						movelist.push([i, i-9, "ep-capture", i-1]);
+					}
+					if(curX < 8 && i-7 == thisnode.enpassantSquare) {
+						movelist.push([i, i-7, "ep-capture", i+1]);
+					}
+				}
+				// promote via moving
 				if(curY === 2 && !tP[i-8]) {
 					movelist.push([i, i-8, "promote", 8]);
 					movelist.push([i, i-8, "promote", 9]);
 					movelist.push([i, i-8, "promote", 10]);
 					movelist.push([i, i-8, "promote", 11]);
 				}
-				if(curY === 7 && !tP[i-16] && !tP[i-8]) movelist.push([i, i-16]);
+				// 2 square opening move
+				if(curY === 7 && !tP[i-16] && !tP[i-8]) movelist.push([i, i-16, "ep-enable", i-8]);
+				// captures
 				if(curY > 1) {
 					if(curX < 8 && thisnode.isB(i-7)) {
 						if(curY > 2) {
 							movelist.push([i, i-7]);
 						} else {
+							// promote via capture
 							movelist.push([i, i-7, "promote", 8]);
 							movelist.push([i, i-7, "promote", 9]);
 							movelist.push([i, i-7, "promote", 10]);
@@ -372,13 +386,21 @@ var perft = function(thisnode) {
 			switch(tS) {
 			case 1:  // black pawn
 				if(curY < 7 && !tP[i+8]) movelist.push([i, i+8]);
+				if(curY === 5) {
+					if(curX > 1 && i+9 == thisnode.enpassantSquare) {
+						movelist.push([i, i+9, "ep-capture", i+1]);
+					}
+					if(curX < 8 && i+7 == thisnode.enpassantSquare) {
+						movelist.push([i, i+7, "ep-capture", i-1]);
+					}
+				}
 				if(curY === 7 && !tP[i+8]) {
 					movelist.push([i, i+8, "promote", 2]);
 					movelist.push([i, i+8, "promote", 3]);
 					movelist.push([i, i+8, "promote", 4]);
 					movelist.push([i, i+8, "promote", 5]);
 				}
-				if(curY === 2 && !tP[i+16] && !tP[i+8]) movelist.push([i, i+16]);
+				if(curY === 2 && !tP[i+16] && !tP[i+8]) movelist.push([i, i+16, "ep-enable", i+8]);
 				if(curY < 8) {
 					if(curX < 8 && thisnode.isW(i+7)) {
 						if(curY < 7) {
@@ -683,9 +705,18 @@ var board = {
 };
 
 var updateBoard = function() {
+
 	var thisnode = $("#board").data("node");
 	var thisposition = thisnode.position;
 	var mark = 64;
+	var epsquare = thisnode.enpassantSquare;
+	var castle = '';
+
+	if(epsquare > -1) epsquare = algebraicSquares.numbers[epsquare];
+	for(var i in thisnode.castle) {
+		castle += i + ' ';
+	}
+
 	$(".fromsq").removeClass("fromsq");
 	if(thisnode.move) {
 		$("#turn").html("<p class=\"white\">White's Turn</p>");
@@ -694,11 +725,7 @@ var updateBoard = function() {
 	}
 	$("#movenumber").html("<p class=\"info\">Move number: " + thisnode.moveNumber + "</p>");
 	$("#drawclock").html("<p class=\"info\">Draw clock: " + thisnode.drawClock + "</p>");
-	$("#enpassant").html("<p class=\"info\">En passant square: " + thisnode.enpassantSquare + "</p>");
-	var castle = '';
-	for(var i in thisnode.castle) {
-		castle += i + ' ';
-	}
+	$("#enpassant").html("<p class=\"info\">En passant square: " + epsquare + "</p>");
 	$("#castle").html("<p class=\"info\">Castles: " + castle + "</p>");
 	$("#movelist ul").html('');
 	updateMoveList();
@@ -732,10 +759,15 @@ var domove = function(curnode, themove) {
 	// actually move the piece
 	curnode.position[themove[1]] = curnode.position[themove[0]];
 	curnode.position[themove[0]] = 0;
+	curnode.enpassantSquare = -1;
 	if(themove.length > 2) {
 		switch(themove[2]) {
 		case "promote":
 			curnode.position[themove[1]] = themove[3];
+		case "ep-enable":
+			curnode.enpassantSquare = themove[3];
+		case "ep-capture":
+			curnode.position[themove[3]] = 0;
 		}
 	}
 	if(!curnode.move) curnode.moveNumber++;
@@ -752,7 +784,7 @@ var updateMoveList = function() {
 		mlhtml += '<li data-perftid="' + i + '">';
 		mlhtml += ucpieces[pieces.numbers[curnode.position[ml[i][0]]]];
 		mlhtml += '<span class="sq1" data-square="' + ml[i][0] + '">' + algebraicSquares.numbers[ml[i][0]] + '</span>';
-		if(curnode.position[ml[i][1]]) {
+		if(curnode.position[ml[i][1]] || (ml[i].length > 2 && ml[i][3] == "ep-capture")) {
 			mlhtml += 'x';
 		} else {
 			mlhtml += '-';
@@ -762,6 +794,8 @@ var updateMoveList = function() {
 			switch(ml[i][2]) {
 			case "promote":
 				mlhtml += ' = ' + ucpieces[pieces.numbers[ml[i][3]]];
+			case "ep-capture":
+				mlhtml += 'ep';
 			}
 		}
 		mlhtml += '</li>';
