@@ -721,6 +721,15 @@ var isCheck = function(curnode, color) {
 
 var domove = function(curnode, themove) {
 	// take in a node and a move and return a new node with the move having been played.
+
+	// update drawClock (50 moves without pawn move or capture = draw)
+	if(curnode.position[themove[0]] == 1 || curnode.position[themove[0]] == 7 || curnode.position[themove[1]]) {
+		curnode.drawClock = 0;
+	} else {
+		curnode.drawClock++;
+	}
+
+	// actually move the piece
 	curnode.position[themove[1]] = curnode.position[themove[0]];
 	curnode.position[themove[0]] = 0;
 	if(themove.length > 2) {
@@ -729,6 +738,7 @@ var domove = function(curnode, themove) {
 			curnode.position[themove[1]] = themove[3];
 		}
 	}
+	if(!curnode.move) curnode.moveNumber++;
 	curnode.move = !curnode.move;
 	return curnode;
 }
