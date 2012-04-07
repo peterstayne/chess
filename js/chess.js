@@ -362,8 +362,8 @@ var perft = function(thisnode) {
 				}
 				if(curY === 2 && !tP[i+16] && !tP[i+8]) movelist.push([i, i+16]);
 				if(curY < 8) {
-					if(curX < 8 && thisnode.isW(i-7)) movelist.push([i, i-7]);
-					if(curX > 1 && thisnode.isW(i-9)) movelist.push([i, i-9]);
+					if(curX < 8 && thisnode.isW(i+7)) movelist.push([i, i+7]);
+					if(curX > 1 && thisnode.isW(i+9)) movelist.push([i, i+9]);
 				}
 				break;
 			case 2:  // black knight
@@ -739,6 +739,32 @@ $(document).ready(function(){
 		updateBoard();
 	});
 	$("#do-perft").click(updateMoveList);
+	$(document).delegate(".square", "click", function() {
+		if($(".fromsq").length) {
+			var curnode = $("#board").data("node");
+			var ml = perft(curnode);
+			var fromsq = +($(".fromsq").eq(0).attr("id").replace("square", ""));
+			var tosq = +($(this).attr("id").replace("square", ""));
+			var themove = 0;
+			for(var i in ml) {
+				if(ml[i][0] == fromsq && ml[i][1] == tosq) {
+					themove = i;
+					break;
+				}
+			}
+			if(themove) {
+				$(".fromsq").removeClass("fromsq");
+				curnode = domove(curnode, ml[themove]);
+				$("#board").data("node", curnode);
+				updateBoard();
+			} else {
+				$(".fromsq").removeClass("fromsq");
+				$(this).addClass("fromsq");
+			}
+		} else {
+			$(this).addClass("fromsq");
+		}
+	});
 });
 
 $(document).delegate("#possible-moves li", "click", function() {
