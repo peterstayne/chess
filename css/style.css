@@ -100,6 +100,10 @@ input[type=button] {
 }
 #possible-moves li {
 	list-style-position: outer;
+	font-family: courier;
+}
+#possible-moves li span {
+	font-family: courier;
 }
 #possible-moves li:hover {
 	background-color: #665500;

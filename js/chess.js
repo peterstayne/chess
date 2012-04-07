@@ -112,8 +112,26 @@ var perft = function(thisnode) {
 				}
 				if(curY === 7 && !tP[i-16] && !tP[i-8]) movelist.push([i, i-16]);
 				if(curY > 1) {
-					if(curX < 8 && thisnode.isB(i-7)) movelist.push([i, i-7]);
-					if(curX > 1 && thisnode.isB(i-9)) movelist.push([i, i-9]);
+					if(curX < 8 && thisnode.isB(i-7)) {
+						if(curY > 2) {
+							movelist.push([i, i-7]);
+						} else {
+							movelist.push([i, i-7, "promote", 8]);
+							movelist.push([i, i-7, "promote", 9]);
+							movelist.push([i, i-7, "promote", 10]);
+							movelist.push([i, i-7, "promote", 11]);
+						}
+					}
+					if(curX > 1 && thisnode.isB(i-9)) {
+						if(curY > 2) {
+							movelist.push([i, i-9]);
+						} else {
+							movelist.push([i, i-9, "promote", 8]);
+							movelist.push([i, i-9, "promote", 9]);
+							movelist.push([i, i-9, "promote", 10]);
+							movelist.push([i, i-9, "promote", 11]);
+						}
+					}
 				}
 				break;
 			case 8: // white knight
@@ -362,8 +380,26 @@ var perft = function(thisnode) {
 				}
 				if(curY === 2 && !tP[i+16] && !tP[i+8]) movelist.push([i, i+16]);
 				if(curY < 8) {
-					if(curX < 8 && thisnode.isW(i+7)) movelist.push([i, i+7]);
-					if(curX > 1 && thisnode.isW(i+9)) movelist.push([i, i+9]);
+					if(curX < 8 && thisnode.isW(i+7)) {
+						if(curY < 7) {
+							movelist.push([i, i+7]);
+						} else {
+							movelist.push([i, i+7, "promote", 2]);
+							movelist.push([i, i+7, "promote", 3]);
+							movelist.push([i, i+7, "promote", 4]);
+							movelist.push([i, i+7, "promote", 5]);
+						}
+					}
+					if(curX > 1 && thisnode.isW(i+9)) {
+						if(curY < 7) {
+							movelist.push([i, i+9]);
+						} else {
+							movelist.push([i, i+9, "promote", 2]);
+							movelist.push([i, i+9, "promote", 3]);
+							movelist.push([i, i+9, "promote", 4]);
+							movelist.push([i, i+9, "promote", 5]);
+						}
+					}
 				}
 				break;
 			case 2:  // black knight
@@ -683,6 +719,7 @@ var isCheck = function(curnode, color) {
 }
 
 var domove = function(curnode, themove) {
+	// take in a node and a move and return a new node with the move having been played.
 	curnode.position[themove[1]] = curnode.position[themove[0]];
 	curnode.position[themove[0]] = 0;
 	if(themove.length > 2) {
@@ -696,12 +733,19 @@ var domove = function(curnode, themove) {
 }
 
 var updateMoveList = function() {
-	var ml = perft( $("#board").data("node") );
+	// general ui function: run perft and update the move list ui
+	var curnode = $("#board").data("node");
+	var ml = perft( curnode );
 	var mlhtml = '<ul>';
 	for(var i in ml) {
 		mlhtml += '<li data-perftid="' + i + '">';
 		mlhtml += '<span class="sq1" data-square="' + ml[i][0] + '">' + algebraicSquares.numbers[ml[i][0]] + '</span>';
-		mlhtml += ' -> <span class="sq2" data-square="' + ml[i][1] + '">' + algebraicSquares.numbers[ml[i][1]] + '</span>';
+		if(curnode.position[ml[i][1]]) {
+			mlhtml += 'x';
+		} else {
+			mlhtml += '-';
+		}
+		mlhtml += '<span class="sq2" data-square="' + ml[i][1] + '">' + algebraicSquares.numbers[ml[i][1]] + '</span>';
 		if(ml[i].length > 2) {
 			switch(ml[i][2]) {
 			case "promote":
