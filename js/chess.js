@@ -686,6 +686,7 @@ var updateBoard = function() {
 	var thisnode = $("#board").data("node");
 	var thisposition = thisnode.position;
 	var mark = 64;
+	$(".fromsq").removeClass("fromsq");
 	if(thisnode.move) {
 		$("#turn").html("<p class=\"white\">White's Turn</p>");
 	} else {
