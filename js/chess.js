@@ -9,7 +9,7 @@ for(var i = 0; i<8; i++) {
 	for(var r = 8; r; r--) {
 		algebraicSquares.symbols[algebraicSquares.ranks[i]+(9-r)] = sq;
 		algebraicSquares.numbers[sq] = algebraicSquares.ranks[r-1]+(8-i);
-		coords[sq] = [i, 8-r];
+		coords[sq] = [9-r, i+1];
 		sq++;
 	}
 }
@@ -659,50 +659,48 @@ var perft = function(thisnode) {
 	}
 	return movelist;
 }
-var board = {
-	parsefen: function(fen) {
-		var returnNode = new node();
-		var fenparts = fen.split(" ");
-		positions = fenparts[0].split("/");
-		var row = 0;
-		var col = 0;
-		var mark = 0;
-		for(var i in positions) {
-			col = 0;
-			for(var p = 0; p < positions[i].length; p++) {
-				mark = ((row * 8) + col);
-				this_position = positions[i][p];
-				this_position_code = this_position.charCodeAt();
-				if(this_position_code > 47 && this_position_code < 58) {
-					for(var r = 0; r < +(this_position); r++) {
-						returnNode.position[mark + r] = 0;
-					}
-					col += (+this_position);
-				} else {
-					returnNode.position[mark] = pieces.symbols[this_position];
-					col++;
+var parsefen = function(fen) {
+	var returnNode = new node();
+	var fenparts = fen.split(" ");
+	positions = fenparts[0].split("/");
+	var row = 0;
+	var col = 0;
+	var mark = 0;
+	for(var i in positions) {
+		col = 0;
+		for(var p = 0; p < positions[i].length; p++) {
+			mark = ((row * 8) + col);
+			this_position = positions[i][p];
+			this_position_code = this_position.charCodeAt();
+			if(this_position_code > 47 && this_position_code < 58) {
+				for(var r = 0; r < +(this_position); r++) {
+					returnNode.position[mark + r] = 0;
 				}
-			}
-			row++;
-		}
-		returnNode.move = (fenparts[1].toLowerCase() == "w");
-		var castlemark = fenparts[2].length;
-		while(castlemark--) {
-			if(fenparts[2][castlemark] in {'k':'', 'K':'', 'q':'', 'Q':''}) {
-				returnNode.castle[fenparts[2][castlemark]] = true;
+				col += (+this_position);
+			} else {
+				returnNode.position[mark] = pieces.symbols[this_position];
+				col++;
 			}
 		}
-		if(fenparts[3] != "-" && typeof algebraicSquares.symbols[fenparts[3]] !== "undefined") {
-			returnNode.enpassantSquare = algebraicSquares.symbols[fenparts[3]];
-		} else {
-			returnNode.enpassantSquare = -1;
-		}
-		if(fenparts[4] == +fenparts[4]) returnNode.drawClock = +fenparts[4];
-		if(fenparts[5] == +fenparts[5]) returnNode.moveNumber = +fenparts[5];
-
-		return returnNode;
+		row++;
 	}
-};
+	returnNode.move = (fenparts[1].toLowerCase() == "w");
+	var castlemark = fenparts[2].length;
+	while(castlemark--) {
+		if(fenparts[2][castlemark] in {'k':'', 'K':'', 'q':'', 'Q':''}) {
+			returnNode.castle[fenparts[2][castlemark]] = true;
+		}
+	}
+	if(fenparts[3] != "-" && typeof algebraicSquares.symbols[fenparts[3]] !== "undefined") {
+		returnNode.enpassantSquare = algebraicSquares.symbols[fenparts[3]];
+	} else {
+		returnNode.enpassantSquare = -1;
+	}
+	if(fenparts[4] == +fenparts[4]) returnNode.drawClock = +fenparts[4];
+	if(fenparts[5] == +fenparts[5]) returnNode.moveNumber = +fenparts[5];
+
+	return returnNode;
+}
 
 var updateBoard = function() {
 
@@ -737,13 +735,149 @@ var updateBoard = function() {
 	return true;
 }
 
-var isCheck = function(curnode, color) {
-	if(color) {
-		var sq = 64;
-		while(sq-- && curnode.position[sq] != 12) { }
-		// check knights
-		// save for later
+var squareInCheck = function(curnode, square, color) {
+	// made this square-agnostic instead of king-specific since I need to check for things like
+	// a king can't castle through check, so need to check the spaces between. Will also probably
+	// use this in position evaluation to analyze pressures in arbitrary spots on the board.
+
+	// See the kingInCheck() function below this one that calls this specifically for kings.
+	var curX = coords[square][0];
+	var curY = coords[square][1];
+ 	var isCheck = false;
+ 	if(color) {
+ 		// check if a black knight can reach this square
+ 		if(curX < 7 && curY > 1 && curnode.position[square - 6] == 2) return true;
+ 		if(curX < 7 && curY < 8 && curnode.position[square + 10] == 2) return true;
+ 		if(curX < 8 && curY > 2 && curnode.position[square - 15] == 2) return true;
+ 		if(curX < 8 && curY < 7 && curnode.position[square + 17] == 2) return true;
+
+ 		if(curX > 2 && curY > 1 && curnode.position[square - 10] == 2) return true;
+ 		if(curX > 2 && curY < 8 && curnode.position[square + 6] == 2) return true;
+ 		if(curX > 1 && curY > 2 && curnode.position[square - 17] == 2) return true;
+ 		if(curX > 1 && curY < 7 && curnode.position[square + 15] == 2) return true;
+
+		cS = square; cX = curX; cY = curY; stop = false;
+		while(cX-- && !stop) {
+			cS--;
+			if(curnode.position[cS] == 5 || curnode.position[cS] == 4 || (cX == curX - 1 && curnode.position[cS] == 6)) return true;
+			if(+curnode.position[cS]) stop = true;
+		}
+		cS = square; cX = curX; cY = curY; stop = false;
+		while(cX++ && cX < 9 && !stop) {
+			cS++;
+			if(curnode.position[cS] == 5 || curnode.position[cS] == 4 || (cX == curX + 1 && curnode.position[cS] == 6)) return true;
+			if(+curnode.position[cS]) stop = true;
+		}
+		cS = square; cX = curX; cY = curY; stop = false;
+		while(cY-- && !stop) {
+			cS-=8;
+			if(curnode.position[cS] == 5 || curnode.position[cS] == 4 || (cY == curY - 1 && curnode.position[cS] == 6)) return true;
+			if(+curnode.position[cS]) stop = true;
+		}
+		cS = square; cX = curX; cY = curY; stop = false;
+		while(cY++ && cY < 9 && !stop) {
+			cS+=8;
+			if(curnode.position[cS] == 5 || curnode.position[cS] == 4 || (cY == curY + 1 && curnode.position[cS] == 6)) return true;
+			if(+curnode.position[cS]) stop = true;
+		}
+		cS = square; cX = curX; cY = curY; stop = false;
+		while(cX-- && cY-- && !stop) {
+			cS-=9;
+			if(curnode.position[cS] == 5 || curnode.position[cS] == 3 || (cX == curX - 1 && cY == curY - 1 && (curnode.position[cS] == 6 || curnode.position[cS] == 1))) return true;
+			if(+curnode.position[cS]) stop = true;
+		}
+		cS = square; cX = curX; cY = curY; stop = false;
+		while(cX-- && cY++ && cY < 8 && !stop) {
+			cS+=7;
+			if(curnode.position[cS] == 5 || curnode.position[cS] == 3 || (cX == curX - 1 && cY == curY + 1 && curnode.position[cS] == 6)) return true;
+			if(+curnode.position[cS]) stop = true;
+		}
+		cS = square; cX = curX; cY = curY; stop = false;
+		while(cX++ && cX < 8 && cY-- && !stop) {
+			cS-=7;
+			if(curnode.position[cS] == 5 || curnode.position[cS] == 3 || (cX == curX + 1 && cY == curY - 1 && (curnode.position[cS] == 6 || curnode.position[cS] == 1))) return true;
+			if(+curnode.position[cS]) stop = true;
+		}
+		cS = square; cX = curX; cY = curY; stop = false;
+		while(cX++ && cX < 8 && cY++ && cY < 8 && !stop) {
+			cS+=9;
+			if(curnode.position[cS] == 5 || curnode.position[cS] == 3 || (cX == curX + 1 && cY == curY + 1 && curnode.position[cS] == 6)) return true;
+			if(+curnode.position[cS]) stop = true;
+		}
+	} else {
+ 		if(curX < 7 && curY > 1 && curnode.position[square - 6] == 8) return true;
+ 		if(curX < 7 && curY < 8 && curnode.position[square + 10] == 8) return true;
+ 		if(curX < 8 && curY > 2 && curnode.position[square - 15] == 8) return true;
+ 		if(curX < 8 && curY < 7 && curnode.position[square + 17] == 8) return true;
+
+ 		if(curX > 2 && curY > 1 && curnode.position[square - 10] == 8) return true;
+ 		if(curX > 2 && curY < 8 && curnode.position[square + 6] == 8) return true;
+ 		if(curX > 1 && curY > 2 && curnode.position[square - 17] == 8) return true;
+ 		if(curX > 1 && curY < 7 && curnode.position[square + 15] == 8) return true;
+
+		cS = square; cX = curX; cY = curY; stop = false;
+		while(cX-- && !stop) {
+			cS--;
+			if(curnode.position[cS] == 11 || curnode.position[cS] == 10 || (cX == curX - 1 && curnode.position[cS] == 12)) return true;
+			if(+curnode.position[cS]) stop = true;
+		}
+		cS = square; cX = curX; cY = curY; stop = false;
+		while(cX++ && cX < 9 && !stop) {
+			cS++;
+			if(curnode.position[cS] == 11 || curnode.position[cS] == 10 || (cX == curX + 1 && curnode.position[cS] == 12)) return true;
+			if(+curnode.position[cS]) stop = true;
+		}
+		cS = square; cX = curX; cY = curY; stop = false;
+		while(cY-- && !stop) {
+			cS-=8;
+			if(curnode.position[cS] == 11 || curnode.position[cS] == 10 || (cY == curY - 1 && curnode.position[cS] == 12)) return true;
+			if(+curnode.position[cS]) stop = true;
+		}
+		cS = square; cX = curX; cY = curY; stop = false;
+		while(cY++ && cY < 9 && !stop) {
+			cS+=8;
+			if(curnode.position[cS] == 11 || curnode.position[cS] == 10 || (cY == curY + 1 && curnode.position[cS] == 12)) return true;
+			if(+curnode.position[cS]) stop = true;
+		}
+		cS = square; cX = curX; cY = curY; stop = false;
+		while(cX-- && cY-- && !stop) {
+			cS-=9;
+			if(curnode.position[cS] == 11 || curnode.position[cS] == 9 || (cX == curX - 1 && cY == curY - 1 && (curnode.position[cS] == 12 || curnode.position[cS] == 7))) return true;
+			if(+curnode.position[cS]) stop = true;
+		}
+		cS = square; cX = curX; cY = curY; stop = false;
+		while(cX-- && cY++ && cY < 8 && !stop) {
+			cS+=7;
+			if(curnode.position[cS] == 11 || curnode.position[cS] == 9 || (cX == curX - 1 && cY == curY + 1 && curnode.position[cS] == 12)) return true;
+			if(+curnode.position[cS]) stop = true;
+		}
+		cS = square; cX = curX; cY = curY; stop = false;
+		while(cX++ && cX < 8 && cY-- && !stop) {
+			cS-=7;
+			if(curnode.position[cS] == 11 || curnode.position[cS] == 9 || (cX == curX + 1 && cY == curY - 1 && (curnode.position[cS] == 12 || curnode.position[cS] == 7))) return true;
+			if(+curnode.position[cS]) stop = true;
+		}
+		cS = square; cX = curX; cY = curY; stop = false;
+		while(cX++ && cX < 8 && cY++ && cY < 8 && !stop) {
+			cS+=9;
+			if(curnode.position[cS] == 11 || curnode.position[cS] == 9 || (cX == curX + 1 && cY == curY + 1 && curnode.position[cS] == 12)) return true;
+			if(+curnode.position[cS]) stop = true;
+		}
+
 	}
+	return false;
+}
+var kingInCheck = function(curnode, color) {
+	var sq = 64;
+	while(sq--) {
+		if(!color && curnode.position[sq] == 6) {
+			return squareInCheck(curnode, sq, color);
+		}
+		if(color && curnode.position[sq] == 12) {
+			return squareInCheck(curnode, sq, color);
+		}
+	}
+	return false;
 }
 
 var domove = function(curnode, themove) {
@@ -816,7 +950,7 @@ $(document).ready(function(){
 
 	$("#submitfen").click(function() {
 		$(".square").text(' ');
-		$("#board").data("node", board.parsefen($("#fen").val()));
+		$("#board").data("node", parsefen($("#fen").val()));
 		updateBoard();
 	});
 	$("#submitfen").trigger('click');
