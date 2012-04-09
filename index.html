@@ -7,20 +7,29 @@
 <body>
 <div id="page">
 	<div id="board-container" class="board-container">
-		<div id="board" class="board">
+		<div id="board" class="board ">
 		</div> 
 	</div>
 	<div id="board-info" class="board-info">
+		<div id="player-settings-container" class="info-panel">
+			<p>Player options</p>
+			<form name="player-settings-form" action="" method="get" />
+				<p><input type="radio" name="player-option" id="pvp" /> <label for="pvp">Player vs Player</label></p>
+				<p><input type="radio" name="player-option" id="pvc" /> <label for="pvp">Player vs Computer</label></p>
+				<p><input type="radio" name="player-option" id="cvp" /> <label for="pvp">Computer vs Player</label></p>
+				<p><input type="radio" name="player-option" id="cvc" /> <label for="pvp">Computer vs Computer</label></p>
+			</form>
+		</div>
 		<div id="turn" class="info-panel">
 		</div>
-		<div id="castle" class="info-panel">
+<!--		<div id="castle" class="info-panel">
 		</div>
 		<div id="enpassant" class="info-panel">
 		</div>
 		<div id="movenumber" class="info-panel">
 		</div>
 		<div id="drawclock" class="info-panel">
-		</div>
+		</div>-->
 		<div id="possible-moves" class="info-panel">
 			<p>Possible Moves</p>
 			<input type="button" id="do-random" class="do-random button-action" value="Do Random" />

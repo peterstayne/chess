@@ -99,7 +99,7 @@ input[type=button] {
 	border: 1px solid #4444ff;
 }
 #possible-moves {
-	height: 650px;
+	height: 550px;
 	overflow-y: auto;
 	width: 115px;
 }
@@ -115,7 +115,7 @@ input[type=button] {
 	cursor: pointer;
 }
 #game-moves {
-	height: 650px;
+	height: 550px;
 	overflow-y: auto;
 	width: 210px;
 }
@@ -170,4 +170,7 @@ input.promote-button {
 	width: 50px;
 	height: 50px;
 	font-size: 35px;
+}
+#player-settings-container {
+	height: 90px;
 }
