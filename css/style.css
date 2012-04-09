@@ -100,7 +100,7 @@ input[type=button] {
 #possible-moves {
 	height: 650px;
 	overflow-y: auto;
-	width: 140px;
+	width: 130px;
 }
 #possible-moves li {
 	list-style-position: outer;
@@ -116,16 +116,24 @@ input[type=button] {
 #game-moves {
 	height: 650px;
 	overflow-y: auto;
-	width: 165px;
+	width: 175px;
 }
 #game-moves li {
 	list-style-position: outer;
 	font-family: courier;
+	display: block;
+	float: left;
 }
-#game-moves li span {
+#game-moves li.movenumber {
+	width: 30px;
+}
+#game-moves li.move-item {
+	width: 70px;
+}
+#game-moves li.move-item span {
 	font-family: courier;
 }
-#game-moves li:hover {
+#game-moves li.move-item:hover {
 	background-color: #665500;
 	cursor: pointer;
 }

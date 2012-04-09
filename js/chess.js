@@ -3,11 +3,12 @@ var algebraicSquares = {
 	symbols: {},
 	numbers: []
 };
+var gamemoves = [];
 var coords = [];
 var sq = 0;
 for(var i = 0; i<8; i++) {
 	for(var r = 8; r; r--) {
-		algebraicSquares.symbols[algebraicSquares.ranks[i]+(9-r)] = sq;
+		algebraicSquares.symbols[algebraicSquares.ranks[r-1]+(8-i)] = sq;
 		algebraicSquares.numbers[sq] = algebraicSquares.ranks[r-1]+(8-i);
 		coords[sq] = [9-r, i+1];
 		sq++;
@@ -757,6 +758,7 @@ var parsefen = function(fen) {
 
 	return returnNode;
 }
+
 var outputfen = function(curnode) {
 	var sq = -1;
 	var empty;
@@ -802,6 +804,9 @@ var outputfen = function(curnode) {
 var updateBoard = function() {
 
 	var thisnode = $("#board").data("node");
+
+	if(typeof gamemoves[thisnode.moveNumber] === 'undefined') gamemoves[thisnode.moveNumber] = [];
+	var curmove = (thisnode.move) ? 0 : 1;
 	var thisposition = thisnode.position;
 	var mark = 64;
 	var epsquare = thisnode.enpassantSquare;
@@ -828,6 +833,7 @@ var updateBoard = function() {
 	$("#castle").html("<p class=\"info\">Castles: " + castle + "</p>");
 	$("#movelist ul").html('');
 	updateMoveList();
+	updateGameMoveList();
 	while(mark--) {
 		thispiece = pieces.numbers[thisposition[mark]];
 		thisColor = (thispiece.toLowerCase() === thispiece) ? "pblack" : "pwhite";
@@ -1052,6 +1058,62 @@ var domove = function(curnode, themove) {
 	return curnode;
 }
 
+var pushMove = function(curnode, move) {
+	if(typeof gamemoves[curnode.moveNumber] === 'undefined') gamemoves[curnode.moveNumber] = [];
+	var curmove = (curnode.move) ? 0 : 1;
+	var movestr = (!move) ? '...' : getMoveString(curnode, move);
+	var tempnode = JSON.parse(JSON.stringify(curnode));
+	tempnode = domove(tempnode, move);
+	gamemoves[curnode.moveNumber][curmove] = {
+		fen: outputfen(tempnode),
+		movestring: movestr
+	}
+	gamemoves.splice(curnode.moveNumber + 1, gamemoves.length - curnode.moveNumber);
+}
+
+var updateGameMoveList = function() {
+	var gmhtml = '<ul>';
+	for(var i in gamemoves) {
+		gmhtml += '<li class="movenumber">' + i + '.</li>';
+		if(typeof gamemoves[i][0] !== "undefined") {
+			gmhtml += '<li class="gm-white move-item" data-fen="' + gamemoves[i][0].fen + '">' + gamemoves[i][0].movestring + '</li>';
+		}
+		if(typeof gamemoves[i][1] !== "undefined") {
+			gmhtml += '<li class="gm-black move-item" data-fen="' + gamemoves[i][1].fen + '">' + gamemoves[i][1].movestring + '</li>';
+		}
+	}
+	gmhtml += '</ul>';
+	$("#game-moves").html(gmhtml);
+}
+var getMoveString = function(curnode, ml) {
+	var mlhtml = '';
+	if(ml.length > 2 && ml[2] == 'castle' && (ml[3] == 'k' || ml[3] =='K')) {
+		mlhtml += '<span class="sq1" data-square="' + ml[0] + '">o-o</span>';
+	} else if(ml.length > 2 && ml[2] == 'castle' && (ml[3] == 'q' || ml[3] =='Q')) {
+		mlhtml += '<span class="sq1" data-square="' + ml[0] + '">o-o-o</span>';
+	} else {
+		mlhtml += ucpieces[pieces.numbers[curnode.position[ml[0]]]];
+		mlhtml += '<span class="sq1" data-square="' + ml[0] + '">' + algebraicSquares.numbers[ml[0]] + '</span>';
+		if(curnode.position[ml[1]] || (ml.length > 2 && ml[3] == "ep-capture")) {
+			mlhtml += 'x';
+		} else {
+			mlhtml += '-';
+		}
+		mlhtml += '<span class="sq2" data-square="' + ml[1] + '">' + algebraicSquares.numbers[ml[1]] + '</span>';
+		if(ml.length > 2) {
+			switch(ml[2]) {
+			case "promote":
+				mlhtml += ' = ' + ucpieces[pieces.numbers[ml[3]]];
+				break;
+			case "ep-capture":
+				mlhtml += 'ep';
+				break;
+			}
+		}
+	}
+	mlhtml += '</li>';
+	return mlhtml;
+}
 var updateMoveList = function() {
 	// general ui function: run perft and update the move list ui
 	var curnode = $("#board").data("node");
@@ -1071,34 +1133,7 @@ var updateMoveList = function() {
 	}
 	$("#possible-moves .button-action").removeAttr("disabled");
 	mlhtml = '<ul>';
-	for(var i in ml) {
-		mlhtml += '<li data-perftid="' + i + '">';
-		if(ml[i].length > 2 && ml[i][2] == 'castle' && (ml[i][3] == 'k' || ml[i][3] =='K')) {
-			mlhtml += '<span class="sq1" data-square="' + ml[i][0] + '">o-o</span>';
-		} else if(ml[i].length > 2 && ml[i][2] == 'castle' && (ml[i][3] == 'q' || ml[i][3] =='Q')) {
-			mlhtml += '<span class="sq1" data-square="' + ml[i][0] + '">o-o-o</span>';
-		} else {
-			mlhtml += ucpieces[pieces.numbers[curnode.position[ml[i][0]]]];
-			mlhtml += '<span class="sq1" data-square="' + ml[i][0] + '">' + algebraicSquares.numbers[ml[i][0]] + '</span>';
-			if(curnode.position[ml[i][1]] || (ml[i].length > 2 && ml[i][3] == "ep-capture")) {
-				mlhtml += 'x';
-			} else {
-				mlhtml += '-';
-			}
-			mlhtml += '<span class="sq2" data-square="' + ml[i][1] + '">' + algebraicSquares.numbers[ml[i][1]] + '</span>';
-			if(ml[i].length > 2) {
-				switch(ml[i][2]) {
-				case "promote":
-					mlhtml += ' = ' + ucpieces[pieces.numbers[ml[i][3]]];
-					break;
-				case "ep-capture":
-					mlhtml += 'ep';
-					break;
-				}
-			}
-		}
-		mlhtml += '</li>';
-	}
+	for(var i in ml) mlhtml += '<li data-perftid="' + i + '">' + getMoveString(curnode, ml[i]) + '</li>';
 	mlhtml += '</ul>';
 	$("#movelist").html(mlhtml);
 }
@@ -1115,7 +1150,10 @@ $(document).ready(function(){
 
 	$("#submitfen").click(function() {
 		$(".square").text(' ');
-		$("#board").data("node", parsefen($("#fen").val()));
+		var curnode = parsefen($("#fen").val());
+		$("#board").data("node", curnode);
+		gamemoves = [];
+		pushMove(curnode, false);
 		updateBoard();
 	});
 	$("#submitfen").trigger('click');
@@ -1123,11 +1161,11 @@ $(document).ready(function(){
 		var curnode = $("#board").data("node");
 		var ml = perft( curnode );
 		var themove = ml[~~(Math.random() * ml.length)];
+		pushMove(curnode, themove);
 		curnode = domove(curnode, themove);
 		$("#board").data("node", curnode);
 		updateBoard();
 	});
-	$("#do-perft").click(updateMoveList);
 	$(document).delegate(".square", "click", function() {
 		if($(".fromsq").length) {
 			var curnode = $("#board").data("node");
@@ -1142,6 +1180,7 @@ $(document).ready(function(){
 				}
 			}
 			if(themove) {
+				pushMove(curnode, ml[themove]);
 				curnode = domove(curnode, ml[themove]);
 				$("#board").data("node", curnode);
 				updateBoard();
@@ -1157,7 +1196,14 @@ $(document).ready(function(){
 
 $(document).delegate("#possible-moves li", "click", function() {
 	var thisnode = $("#board").data("node");
-	thisnode = domove(thisnode, perft(thisnode)[$(this).attr("data-perftid")]);
+	var thismove = perft(thisnode)[$(this).attr("data-perftid")];
+	pushMove(curnode, thismove);
+	thisnode = domove(thisnode, thismove);
 	$("#board").data("node", thisnode);
+	updateBoard();
+});
+$(document).delegate("#game-moves li.move-item", "click", function() {
+	var curnode = parsefen($(this).attr("data-fen"));
+	$("#board").data("node", curnode);
 	updateBoard();
 });
