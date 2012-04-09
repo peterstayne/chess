@@ -728,7 +728,11 @@ var updateBoard = function() {
 
 	if(epsquare > -1) epsquare = algebraicSquares.numbers[epsquare];
 	for(var i in thisnode.castle) {
-		castle += i + ' ';
+		if(thisnode.castle[i]) {
+			castle += i + ' ';
+		} else {
+			castle += '- ';
+		}
 	}
 
 	$(".fromsq").removeClass("fromsq");
@@ -904,6 +908,26 @@ var domove = function(curnode, themove) {
 		curnode.drawClock = 0;
 	} else {
 		curnode.drawClock++;
+	}
+	if(curnode.position[themove[0]] == 6) {
+		curnode.castle.k = false;
+		curnode.castle.q = false;
+	}
+	if(curnode.position[themove[0]] == 12) {
+		curnode.castle.K = false;
+		curnode.castle.Q = false;
+	}
+	if(themove[0] == 0 && curnode.position[themove[0]] == 4) {
+		curnode.castle.q = false;
+	}
+	if(themove[0] == 7 && curnode.position[themove[0]] == 4) {
+		curnode.castle.k = false;
+	}
+	if(themove[0] == 56 && curnode.position[themove[0]] == 10) {
+		curnode.castle.Q = false;
+	}
+	if(themove[0] == 63 && curnode.position[themove[0]] == 10) {
+		curnode.castle.K = false;
 	}
 
 	// actually move the piece
