@@ -1104,7 +1104,7 @@ var getMoveString = function(curnode, ml) {
 		if(ml.length > 2) {
 			switch(ml[2]) {
 			case "promote":
-				mlhtml += ' = ' + ucpieces[pieces.numbers[ml[3]]];
+				mlhtml += '=' + ucpieces[pieces.numbers[ml[3]]];
 				break;
 			case "ep-capture":
 				mlhtml += 'ep';

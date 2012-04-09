@@ -129,7 +129,7 @@ input[type=button] {
 	clear: both;
 }
 #game-moves li.move-item {
-	width: 70px;
+	width: 80px;
 }
 #game-moves li.move-item span {
 	font-family: courier;
