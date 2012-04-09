@@ -74,17 +74,17 @@ input[type=button] {
 	margin: 10px 0 0 0;
 }
 #page {
-	width: 900px;
+	width: 910px;
 	margin: 10px auto;
 	height: 1000px;
 }
 .board-info {
-	width: 340px;
+	width: 350px;
 	float: right;
 }
 .info-panel {
 	float: right;
-	width: 320px;
+	width: 328px;
 	height: 18px;
 	color: #fff;
 	padding: 6px;
@@ -100,7 +100,7 @@ input[type=button] {
 #possible-moves {
 	height: 650px;
 	overflow-y: auto;
-	width: 130px;
+	width: 115px;
 }
 #possible-moves li {
 	list-style-position: outer;
@@ -116,7 +116,7 @@ input[type=button] {
 #game-moves {
 	height: 650px;
 	overflow-y: auto;
-	width: 175px;
+	width: 200px;
 }
 #game-moves li {
 	list-style-position: outer;
@@ -126,6 +126,7 @@ input[type=button] {
 }
 #game-moves li.movenumber {
 	width: 30px;
+	clear: both;
 }
 #game-moves li.move-item {
 	width: 70px;
