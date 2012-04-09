@@ -858,25 +858,25 @@ var squareInCheck = function(curnode, square, color) {
 		cS = square; cX = curX; cY = curY; stop = false;
 		while(cX-- && cY-- && !stop) {
 			cS-=9;
-			if(curnode.position[cS] == 11 || curnode.position[cS] == 9 || (cX == curX - 1 && cY == curY - 1 && (curnode.position[cS] == 12 || curnode.position[cS] == 7))) return true;
+			if(curnode.position[cS] == 11 || curnode.position[cS] == 9 || (cX == curX - 1 && cY == curY - 1 && curnode.position[cS] == 12)) return true;
 			if(+curnode.position[cS]) stop = true;
 		}
 		cS = square; cX = curX; cY = curY; stop = false;
 		while(cX-- && cY++ && cY < 8 && !stop) {
 			cS+=7;
-			if(curnode.position[cS] == 11 || curnode.position[cS] == 9 || (cX == curX - 1 && cY == curY + 1 && curnode.position[cS] == 12)) return true;
+			if(curnode.position[cS] == 11 || curnode.position[cS] == 9 || (cX == curX - 1 && cY == curY + 1 && (curnode.position[cS] == 12 || curnode.position[cS] == 7))) return true;
 			if(+curnode.position[cS]) stop = true;
 		}
 		cS = square; cX = curX; cY = curY; stop = false;
 		while(cX++ && cX < 8 && cY-- && !stop) {
 			cS-=7;
-			if(curnode.position[cS] == 11 || curnode.position[cS] == 9 || (cX == curX + 1 && cY == curY - 1 && (curnode.position[cS] == 12 || curnode.position[cS] == 7))) return true;
+			if(curnode.position[cS] == 11 || curnode.position[cS] == 9 || (cX == curX + 1 && cY == curY - 1 && curnode.position[cS] == 12)) return true;
 			if(+curnode.position[cS]) stop = true;
 		}
 		cS = square; cX = curX; cY = curY; stop = false;
 		while(cX++ && cX < 8 && cY++ && cY < 8 && !stop) {
 			cS+=9;
-			if(curnode.position[cS] == 11 || curnode.position[cS] == 9 || (cX == curX + 1 && cY == curY + 1 && curnode.position[cS] == 12)) return true;
+			if(curnode.position[cS] == 11 || curnode.position[cS] == 9 || (cX == curX + 1 && cY == curY + 1 && (curnode.position[cS] == 12 || curnode.position[cS] == 7))) return true;
 			if(+curnode.position[cS]) stop = true;
 		}
 
@@ -929,7 +929,19 @@ var updateMoveList = function() {
 	// general ui function: run perft and update the move list ui
 	var curnode = $("#board").data("node");
 	var ml = perft( curnode );
-	var mlhtml = '<ul>';
+	var mlhtml = '';
+	if(!ml.length) {
+		if(kingInCheck(curnode.move)) {
+			mlhtml = 'checkmate!!';
+		} else {
+			mlhtml = 'stalemate!!';
+		}
+		alert(mlhtml);
+		mlhtml = '<p>' + mlhtml + '</p>';
+		$("#movelist").html(mlhtml);
+		return false;
+	}
+	mlhtml = '<ul>';
 	for(var i in ml) {
 		mlhtml += '<li data-perftid="' + i + '">';
 		mlhtml += ucpieces[pieces.numbers[curnode.position[ml[i][0]]]];
