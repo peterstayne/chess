@@ -74,17 +74,17 @@ input[type=button] {
 	margin: 10px 0 0 0;
 }
 #page {
-	width: 910px;
+	width: 920px;
 	margin: 10px auto;
 	height: 1000px;
 }
 .board-info {
-	width: 350px;
+	width: 360px;
 	float: right;
 }
 .info-panel {
 	float: right;
-	width: 328px;
+	width: 338px;
 	height: 18px;
 	color: #fff;
 	padding: 6px;
@@ -116,7 +116,7 @@ input[type=button] {
 #game-moves {
 	height: 650px;
 	overflow-y: auto;
-	width: 200px;
+	width: 210px;
 }
 #game-moves li {
 	list-style-position: outer;

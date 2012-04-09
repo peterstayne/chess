@@ -433,7 +433,7 @@ var perft = function(thisnode) {
 				}
 				if(curY === 2 && !tP[i+16] && !tP[i+8]) movelist.push([i, i+16, "ep-enable", i+8]);
 				if(curY < 8) {
-					if(curX < 8 && thisnode.isW(i+7)) {
+					if(curX > 1 && thisnode.isW(i+7)) {
 						if(curY < 7) {
 							movelist.push([i, i+7]);
 						} else {
@@ -443,7 +443,7 @@ var perft = function(thisnode) {
 							movelist.push([i, i+7, "promote", 5]);
 						}
 					}
-					if(curX > 1 && thisnode.isW(i+9)) {
+					if(curX < 8 && thisnode.isW(i+9)) {
 						if(curY < 7) {
 							movelist.push([i, i+9]);
 						} else {
