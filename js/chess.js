@@ -803,19 +803,19 @@ var squareInCheck = function(curnode, square, color) {
 			if(+curnode.position[cS]) stop = true;
 		}
 		cS = square; cX = curX; cY = curY; stop = false;
-		while(cX-- && cY++ && cY < 8 && !stop) {
+		while(cX-- && cY++ && cY < 9 && !stop) {
 			cS+=7;
 			if(curnode.position[cS] == 5 || curnode.position[cS] == 3 || (cX == curX - 1 && cY == curY + 1 && curnode.position[cS] == 6)) return true;
 			if(+curnode.position[cS]) stop = true;
 		}
 		cS = square; cX = curX; cY = curY; stop = false;
-		while(cX++ && cX < 8 && cY-- && !stop) {
+		while(cX++ && cX < 9 && cY-- && !stop) {
 			cS-=7;
 			if(curnode.position[cS] == 5 || curnode.position[cS] == 3 || (cX == curX + 1 && cY == curY - 1 && (curnode.position[cS] == 6 || curnode.position[cS] == 1))) return true;
 			if(+curnode.position[cS]) stop = true;
 		}
 		cS = square; cX = curX; cY = curY; stop = false;
-		while(cX++ && cX < 8 && cY++ && cY < 8 && !stop) {
+		while(cX++ && cX < 9 && cY++ && cY < 9 && !stop) {
 			cS+=9;
 			if(curnode.position[cS] == 5 || curnode.position[cS] == 3 || (cX == curX + 1 && cY == curY + 1 && curnode.position[cS] == 6)) return true;
 			if(+curnode.position[cS]) stop = true;
@@ -862,19 +862,19 @@ var squareInCheck = function(curnode, square, color) {
 			if(+curnode.position[cS]) stop = true;
 		}
 		cS = square; cX = curX; cY = curY; stop = false;
-		while(cX-- && cY++ && cY < 8 && !stop) {
+		while(cX-- && cY++ && cY < 9 && !stop) {
 			cS+=7;
 			if(curnode.position[cS] == 11 || curnode.position[cS] == 9 || (cX == curX - 1 && cY == curY + 1 && (curnode.position[cS] == 12 || curnode.position[cS] == 7))) return true;
 			if(+curnode.position[cS]) stop = true;
 		}
 		cS = square; cX = curX; cY = curY; stop = false;
-		while(cX++ && cX < 8 && cY-- && !stop) {
+		while(cX++ && cX < 9 && cY-- && !stop) {
 			cS-=7;
 			if(curnode.position[cS] == 11 || curnode.position[cS] == 9 || (cX == curX + 1 && cY == curY - 1 && curnode.position[cS] == 12)) return true;
 			if(+curnode.position[cS]) stop = true;
 		}
 		cS = square; cX = curX; cY = curY; stop = false;
-		while(cX++ && cX < 8 && cY++ && cY < 8 && !stop) {
+		while(cX++ && cX < 9 && cY++ && cY < 9 && !stop) {
 			cS+=9;
 			if(curnode.position[cS] == 11 || curnode.position[cS] == 9 || (cX == curX + 1 && cY == curY + 1 && (curnode.position[cS] == 12 || curnode.position[cS] == 7))) return true;
 			if(+curnode.position[cS]) stop = true;
@@ -914,10 +914,13 @@ var domove = function(curnode, themove) {
 		switch(themove[2]) {
 		case "promote":
 			curnode.position[themove[1]] = themove[3];
+			break;
 		case "ep-enable":
 			curnode.enpassantSquare = themove[3];
+			break;
 		case "ep-capture":
 			curnode.position[themove[3]] = 0;
+			break;
 		}
 	}
 	if(!curnode.move) curnode.moveNumber++;
@@ -931,16 +934,18 @@ var updateMoveList = function() {
 	var ml = perft( curnode );
 	var mlhtml = '';
 	if(!ml.length) {
-		if(kingInCheck(curnode.move)) {
+		if(kingInCheck(curnode, curnode.move)) {
 			mlhtml = 'checkmate!!';
 		} else {
 			mlhtml = 'stalemate!!';
 		}
+		$("#possible-moves .button-action").attr("disabled", "disabled");
 		alert(mlhtml);
 		mlhtml = '<p>' + mlhtml + '</p>';
 		$("#movelist").html(mlhtml);
 		return false;
 	}
+	$("#possible-moves .button-action").removeAttr("disabled");
 	mlhtml = '<ul>';
 	for(var i in ml) {
 		mlhtml += '<li data-perftid="' + i + '">';
@@ -956,8 +961,10 @@ var updateMoveList = function() {
 			switch(ml[i][2]) {
 			case "promote":
 				mlhtml += ' = ' + ucpieces[pieces.numbers[ml[i][3]]];
+				break;
 			case "ep-capture":
 				mlhtml += 'ep';
+				break;
 			}
 		}
 		mlhtml += '</li>';
