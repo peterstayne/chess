@@ -3,6 +3,7 @@ var algebraicSquares = {
 	symbols: {},
 	numbers: []
 };
+var playerSettings = ["p", "p"];
 var gamemoves = [];
 var coords = [];
 var sq = 0;
@@ -811,6 +812,7 @@ var updateBoard = function() {
 	var mark = 64;
 	var epsquare = (+thisnode.enpassantSquare == -1) ? "-" : thisnode.enpassantSquare;
 	var castle = '';
+	var gameOn = true;
 
 	if(epsquare > -1) epsquare = algebraicSquares.numbers[epsquare];
 	for(var i in thisnode.castle) {
@@ -832,14 +834,14 @@ var updateBoard = function() {
 	$("#enpassant").html("<p class=\"info\">En passant square: " + epsquare + "</p>");
 	$("#castle").html("<p class=\"info\">Castles: " + castle + "</p>");
 	$("#movelist ul").html('');
-	updateMoveList();
+	gameOn = updateMoveList();
 	updateGameMoveList();
 	while(mark--) {
 		thispiece = pieces.numbers[thisposition[mark]];
 		thisColor = (thispiece.toLowerCase() === thispiece) ? "pblack" : "pwhite";
 		$(".square").eq(mark).html("<span class=\"" + thisColor + "\">" + (thispiece != ' ' ? ucpieces[thispiece] : '&nbsp;') + "</span>");
 	}
-	return true;
+	return gameOn;
 }
 
 var squareInCheck = function(curnode, square, color) {
@@ -1057,6 +1059,16 @@ var domove = function(curnode, themove) {
 	curnode.move = !curnode.move;
 	return curnode;
 }
+var doRandom = function() {
+	var curnode = $("#board").data("node");
+	var ml = perft( curnode );
+	var themove = ml[~~(Math.random() * ml.length)];
+	pushMove(curnode, themove);
+	curnode = domove(curnode, themove);
+	$("#board").data("node", curnode);
+	var gameOn = updateBoard();
+	if(gameOn && ((curnode.move && playerSettings[0] == "c") || (!curnode.move && playerSettings[1] == "c"))) setTimeout(doRandom, 50);
+}
 
 var pushMove = function(curnode, move) {
 	if(typeof gamemoves[curnode.moveNumber] === 'undefined') gamemoves[curnode.moveNumber] = [];
@@ -1137,6 +1149,7 @@ var updateMoveList = function() {
 	for(var i in ml) mlhtml += '<li data-perftid="' + i + '">' + getMoveString(curnode, ml[i]) + '</li>';
 	mlhtml += '</ul>';
 	$("#movelist").html(mlhtml);
+	return true;
 }
 
 $(document).ready(function(){
@@ -1158,15 +1171,7 @@ $(document).ready(function(){
 		updateBoard();
 	});
 	$("#submitfen").trigger('click');
-	$("#do-random").click(function() {
-		var curnode = $("#board").data("node");
-		var ml = perft( curnode );
-		var themove = ml[~~(Math.random() * ml.length)];
-		pushMove(curnode, themove);
-		curnode = domove(curnode, themove);
-		$("#board").data("node", curnode);
-		updateBoard();
-	});
+	$("#do-random").click(doRandom());
 	$(document).delegate(".square", "click", function() {
 		$(".modal").css("display", "none");
 		if($(".fromsq").length) {
@@ -1243,4 +1248,11 @@ $(document).delegate("#game-moves li.move-item", "click", function() {
 	var curnode = parsefen($(this).attr("data-fen"));
 	$("#board").data("node", curnode);
 	updateBoard();
+});
+$("#player-settings-container input[type=radio]").change(function() {
+	var curnode = $("#board").data("node");
+	playerSettings = $("#player-settings-container input[type=radio]:checked").val().split("v");
+	if(curnode.move && playerSettings[0] == "c" || !curnode.move && playerSettings[1] == "c") {
+		doRandom();
+	}
 });
