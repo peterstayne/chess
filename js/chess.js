@@ -1068,6 +1068,7 @@ var pushMove = function(curnode, move) {
 		fen: outputfen(tempnode),
 		movestring: movestr
 	}
+	if(!curmove && typeof gamemoves[curnode.moveNumber][1] !== 'undefined') gamemoves[curnode.moveNumber].splice(1,1);
 	gamemoves.splice(curnode.moveNumber + 1, gamemoves.length - curnode.moveNumber);
 }
 
