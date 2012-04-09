@@ -72,6 +72,16 @@ var node = function() {
 	this.move = true;    // true = white, false = black
 };
 
+function clone(obj) {
+   var target = {};
+   for (var i in obj) {
+    if (obj.hasOwnProperty(i)) {
+     target[i] = obj[i];
+    }
+   }
+   return target;
+}
+
 var perft = function(thisnode) {
 
 	// perft is the name of a function in a chess program that returns a list of legal moves
@@ -656,6 +666,12 @@ var perft = function(thisnode) {
 				break;
 			}
 		}
+	}
+	var tempnode;
+	var ml = movelist.length;
+	while(ml--) {
+		tempnode = JSON.parse(JSON.stringify(thisnode));
+		if(kingInCheck(domove(tempnode, movelist[ml]), color)) movelist.splice(ml,1);
 	}
 	return movelist;
 }
