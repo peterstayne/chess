@@ -375,6 +375,26 @@ var perft = function(thisnode) {
 				}
 				break;
 			case 12: // white king
+				if(thisnode.castle.K && 
+					!+thisnode.position[61] && 
+					!+thisnode.position[62] && 
+					!squareInCheck(thisnode, 60, true) && 
+					!squareInCheck(thisnode, 61, true) && 
+					!squareInCheck(thisnode, 62, true)
+				) {
+					movelist.push([i, i+2, "castle", "K"]);
+				}
+				if(thisnode.castle.Q && 
+					!+thisnode.position[57] && 
+					!+thisnode.position[58] && 
+					!+thisnode.position[59] && 
+					!squareInCheck(thisnode, 57, true) && 
+					!squareInCheck(thisnode, 58, true) && 
+					!squareInCheck(thisnode, 59, true) && 
+					!squareInCheck(thisnode, 60, true)
+				) {
+					movelist.push([i, i-2, "castle", "Q"]);
+				}
 				if(curX > 1) {
 					if(thisnode.isBorE(i-1)) movelist.push([i, i-1]);
 					if(curY > 1 && thisnode.isBorE(i-9)) movelist.push([i, i-9]);
@@ -651,6 +671,26 @@ var perft = function(thisnode) {
 				}
 				break;
 			case 6: // black king
+				if(thisnode.castle.k && 
+					!+thisnode.position[5] && 
+					!+thisnode.position[6] && 
+					!squareInCheck(thisnode, 4, false) && 
+					!squareInCheck(thisnode, 5, false) && 
+					!squareInCheck(thisnode, 6, false)
+				) {
+					movelist.push([i, i+2, "castle", "k"]);
+				}
+				if(thisnode.castle.q && 
+					!+thisnode.position[1] && 
+					!+thisnode.position[2] && 
+					!+thisnode.position[3] && 
+					!squareInCheck(thisnode, 1, false) && 
+					!squareInCheck(thisnode, 2, false) && 
+					!squareInCheck(thisnode, 3, false) && 
+					!squareInCheck(thisnode, 4, false)
+				) {
+					movelist.push([i, i-2, "castle", "q"]);
+				}
 				if(curX > 1) {
 					if(thisnode.isWorE(i-1)) movelist.push([i, i-1]);
 					if(curY > 1 && thisnode.isWorE(i-9)) movelist.push([i, i-9]);
@@ -945,6 +985,25 @@ var domove = function(curnode, themove) {
 		case "ep-capture":
 			curnode.position[themove[3]] = 0;
 			break;
+		case "castle":
+			switch(themove[3]) {
+			case "k":
+				curnode.position[5] = curnode.position[7];
+				curnode.position[7] = 0;
+				break;
+			case "q":
+				curnode.position[3] = curnode.position[0];
+				curnode.position[0] = 0;
+				break;
+			case "K":
+				curnode.position[61] = curnode.position[63];
+				curnode.position[63] = 0;
+				break;
+			case "Q":
+				curnode.position[59] = curnode.position[56];
+				curnode.position[56] = 0;
+				break;
+			}
 		}
 	}
 	if(!curnode.move) curnode.moveNumber++;
@@ -973,22 +1032,28 @@ var updateMoveList = function() {
 	mlhtml = '<ul>';
 	for(var i in ml) {
 		mlhtml += '<li data-perftid="' + i + '">';
-		mlhtml += ucpieces[pieces.numbers[curnode.position[ml[i][0]]]];
-		mlhtml += '<span class="sq1" data-square="' + ml[i][0] + '">' + algebraicSquares.numbers[ml[i][0]] + '</span>';
-		if(curnode.position[ml[i][1]] || (ml[i].length > 2 && ml[i][3] == "ep-capture")) {
-			mlhtml += 'x';
+		if(ml[i].length > 2 && ml[i][2] == 'castle' && (ml[i][3] == 'k' || ml[i][3] =='K')) {
+			mlhtml += '<span class="sq1" data-square="' + ml[i][0] + '">o-o</span>';
+		} else if(ml[i].length > 2 && ml[i][2] == 'castle' && (ml[i][3] == 'q' || ml[i][3] =='Q')) {
+			mlhtml += '<span class="sq1" data-square="' + ml[i][0] + '">o-o-o</span>';
 		} else {
-			mlhtml += '-';
-		}
-		mlhtml += '<span class="sq2" data-square="' + ml[i][1] + '">' + algebraicSquares.numbers[ml[i][1]] + '</span>';
-		if(ml[i].length > 2) {
-			switch(ml[i][2]) {
-			case "promote":
-				mlhtml += ' = ' + ucpieces[pieces.numbers[ml[i][3]]];
-				break;
-			case "ep-capture":
-				mlhtml += 'ep';
-				break;
+			mlhtml += ucpieces[pieces.numbers[curnode.position[ml[i][0]]]];
+			mlhtml += '<span class="sq1" data-square="' + ml[i][0] + '">' + algebraicSquares.numbers[ml[i][0]] + '</span>';
+			if(curnode.position[ml[i][1]] || (ml[i].length > 2 && ml[i][3] == "ep-capture")) {
+				mlhtml += 'x';
+			} else {
+				mlhtml += '-';
+			}
+			mlhtml += '<span class="sq2" data-square="' + ml[i][1] + '">' + algebraicSquares.numbers[ml[i][1]] + '</span>';
+			if(ml[i].length > 2) {
+				switch(ml[i][2]) {
+				case "promote":
+					mlhtml += ' = ' + ucpieces[pieces.numbers[ml[i][3]]];
+					break;
+				case "ep-capture":
+					mlhtml += 'ep';
+					break;
+				}
 			}
 		}
 		mlhtml += '</li>';
