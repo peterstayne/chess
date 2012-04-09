@@ -38,6 +38,26 @@
 		<input type="text" size="80" id="fen" class="fen" value="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1" />
 		<input type="button" value="submit" id="submitfen" />
 	</div>
+	<div class="modal" id="promote-white">
+		<p>Promote pawn to which piece?</p>
+		<form name="white-promote" id="white-promote" method="get" action="">
+			<input class="promote-button" type="button" name="promote-Q" id="promote-Q" value="&#9813;" data-piece="11" />
+			<input class="promote-button" type="button" name="promote-R" id="promote-R" value="&#9814;" data-piece="10" />
+			<input class="promote-button" type="button" name="promote-B" id="promote-B" value="&#9815;" data-piece="9" />
+			<input class="promote-button" type="button" name="promote-N" id="promote-N" value="&#9816;" data-piece="8" />
+			<input class="cancel-modal" type="button" name="cancel" value="Cancel" />
+		</form>
+	</div>
+	<div class="modal" id="promote-black">
+		<p>Promote pawn to which piece?</p>
+		<form name="black-promote" id="black-promote" method="get" action="">
+			<input class="promote-button" type="button" name="promote-q" id="promote-q" value="&#9813;" data-piece="5" />
+			<input class="promote-button" type="button" name="promote-r" id="promote-r" value="&#9814;" data-piece="4" />
+			<input class="promote-button" type="button" name="promote-b" id="promote-b" value="&#9815;" data-piece="3" />
+			<input class="promote-button" type="button" name="promote-n" id="promote-n" value="&#9816;" data-piece="2" />
+			<input class="cancel-modal" type="button" name="cancel" value="Cancel" />
+		</form>
+	</div>	
 </div>
 <script src="js/jquery-1.7.2.js"></script>
 <script src="js/chess.js"></script>
