@@ -757,6 +757,47 @@ var parsefen = function(fen) {
 
 	return returnNode;
 }
+var outputfen = function(curnode) {
+	var sq = -1;
+	var empty;
+	var fen = '';
+	for(var y = 0; y < 8; y++) {
+		empty = 0;
+		for(var x = 0; x < 8; x++) {
+			sq++;
+			if(curnode.position[sq] && empty) {
+				fen += empty;
+				empty = 0;
+			}
+			if(curnode.position[sq]) {
+				fen += pieces.numbers[curnode.position[sq]];
+			} else {
+				empty++;
+			}
+		}
+		if(empty) fen += empty;
+		if(y < 7) fen += '/';
+	}
+	fen += (curnode.move) ? " w" : " b";
+	var castlestr = '';
+	for(var i in curnode.castle) {
+		if(curnode.castle[i]) {
+			castlestr += i;
+		}
+	}
+	if(castlestr != '') {
+		fen += ' ' + castlestr;
+	} else {
+		fen += ' -';
+	}
+	if(curnode.enpassantSquare > -1) {
+		fen += ' ' + algebraicSquares.numbers[curnode.enpassantSquare];
+	} else {
+		fen += ' -';
+	}
+	fen += ' ' + curnode.drawClock + ' ' + curnode.moveNumber;
+	return fen;
+}
 
 var updateBoard = function() {
 
