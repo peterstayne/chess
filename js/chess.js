@@ -809,7 +809,7 @@ var updateBoard = function() {
 	var curmove = (thisnode.move) ? 0 : 1;
 	var thisposition = thisnode.position;
 	var mark = 64;
-	var epsquare = thisnode.enpassantSquare;
+	var epsquare = (+thisnode.enpassantSquare == -1) ? "-" : thisnode.enpassantSquare;
 	var castle = '';
 
 	if(epsquare > -1) epsquare = algebraicSquares.numbers[epsquare];
