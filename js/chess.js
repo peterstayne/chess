@@ -1197,7 +1197,7 @@ $(document).ready(function(){
 	$("#submitfen").click(function() {
 		resetGame($("#fen").val());
 	});
-	$("#submitfen").trigger('click');
+	resetGame();
 	$("#do-random").click(doRandom);
 	$(document).delegate(".square", "click", function() {
 		if(!gameOn) return false;
