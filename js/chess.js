@@ -3,7 +3,7 @@ var algebraicSquares = {
 	symbols: {},
 	numbers: []
 };
-var playerSettings = ["p", "p"];
+var playerSettings = ["p", "c"];
 var gamemoves = [];
 var gameOn = true;
 var coords = [];
@@ -1063,11 +1063,7 @@ var doRandom = function() {
 	var curnode = $("#board").data("node");
 	var ml = perft( curnode );
 	var themove = ml[~~(Math.random() * ml.length)];
-	pushMove(curnode, themove);
-	curnode = domove(curnode, themove);
-	$("#board").data("node", curnode);
-	var gameOn = updateBoard();
-	if(gameOn && ((curnode.move && playerSettings[0] == "c") || (!curnode.move && playerSettings[1] == "c"))) setTimeout(doRandom, 5);
+	var gameOn = pushMove(curnode, themove);
 }
 
 var pushMove = function(curnode, move) {
@@ -1080,9 +1076,16 @@ var pushMove = function(curnode, move) {
 		fen: outputfen(tempnode),
 		movestring: movestr
 	}
-	$("#fen").val(outputfen(tempnode));
+	$("#fen").val(outputfen(curnode));
 	if(!curmove && typeof gamemoves[curnode.moveNumber][1] !== 'undefined') gamemoves[curnode.moveNumber].splice(1,1);
 	gamemoves.splice(curnode.moveNumber + 1, gamemoves.length - curnode.moveNumber);
+
+
+	if(!!move) curnode = domove(curnode, move);
+	$("#board").data("node", curnode);
+	updateBoard();
+
+	if(gameOn && ((curnode.move && playerSettings[0] == "c") || (!curnode.move && playerSettings[1] == "c"))) setTimeout(doRandom, 5);
 }
 
 var updateGameMoveList = function() {
@@ -1138,11 +1141,11 @@ var updateMoveList = function() {
 		gameOn = false;
 		if(!ml.length) {
 			if(kingInCheck(curnode, curnode.move)) {
-				mlhtml = 'checkmate!! ';
+				mlhtml = 'Checkmate!! ';
 				mlhtml += (curnode.move) ? "Black" : "White";
 				mlhtml += " wins!!";
 			} else {
-				mlhtml = 'stalemate!!';
+				mlhtml = 'Draw by stalemate!!';
 			}
 		} else {
 			mlhtml = 'Draw via 50-move rule.';
@@ -1172,11 +1175,10 @@ var resetGame = function() {
 		resetFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";	
 	}
 	$(".square").text(' ');
+	gamemoves = [];
 	var curnode = parsefen(resetFen);
 	$("#board").data("node", curnode);
-	gamemoves = [];
 	pushMove(curnode, false);
-	updateBoard();
 	if((curnode.move && playerSettings[0] == "c") || (!curnode.move && playerSettings[1] == "c")) {
 		doRandom();
 	}
@@ -1233,9 +1235,6 @@ $(document).ready(function(){
 					return true;
 				}
 				pushMove(curnode, ml[themove]);
-				curnode = domove(curnode, ml[themove]);
-				$("#board").data("node", curnode);
-				updateBoard();
 			} else {
 				$(".fromsq").removeClass("fromsq");
 				$(this).addClass("fromsq");
@@ -1257,31 +1256,24 @@ $(document).delegate(".promote-button", "click", function() {
 	var themove = [fromsq, tosq, "promote", $this.attr("data-piece")];
 	var curnode = $("#board").data("node");
 	pushMove(curnode, themove);
-	curnode = domove(curnode, themove);
-	$("#board").data("node", curnode);
-	updateBoard();
 	$(".modal").css("display", "none");
 });
 $(document).delegate("#possible-moves li", "click", function() {
 	if(!gameOn) return false;
 	var thisnode = $("#board").data("node");
 	var thismove = perft(thisnode)[$(this).attr("data-perftid")];
-	pushMove(curnode, thismove);
-	thisnode = domove(thisnode, thismove);
-	$("#board").data("node", thisnode);
-	updateBoard();
+	pushMove(thisnode, thismove);
 });
 $(document).delegate("#game-moves li.move-item", "click", function() {
-	if(!gameOn) return false;
 	var curnode = parsefen($(this).attr("data-fen"));
 	$("#board").data("node", curnode);
 	updateBoard();
 });
 $("#player-settings-container input[type=radio]").change(function() {
+	playerSettings = $("#player-settings-container input[type=radio]:checked").val().split("v");
 	if(!gameOn) return false;
 	var curnode = $("#board").data("node");
-	playerSettings = $("#player-settings-container input[type=radio]:checked").val().split("v");
-	if(curnode.move && playerSettings[0] == "c" || !curnode.move && playerSettings[1] == "c") {
+	if((curnode.move && playerSettings[0] == "c") || (!curnode.move && playerSettings[1] == "c")) {
 		doRandom();
 	}
 });
