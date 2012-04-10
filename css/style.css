@@ -174,3 +174,7 @@ input.promote-button {
 #player-settings-container {
 	height: 90px;
 }
+#game-controls {
+	height: 40px;
+	text-align: center;
+}
