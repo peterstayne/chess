@@ -388,10 +388,8 @@ var perft = function(thisnode) {
 					movelist.push([i, i+2, "castle", "K"]);
 				}
 				if(thisnode.castle.Q && 
-					!+thisnode.position[57] && 
 					!+thisnode.position[58] && 
 					!+thisnode.position[59] && 
-					!squareInCheck(thisnode, 57, true) && 
 					!squareInCheck(thisnode, 58, true) && 
 					!squareInCheck(thisnode, 59, true) && 
 					!squareInCheck(thisnode, 60, true)
@@ -684,10 +682,8 @@ var perft = function(thisnode) {
 					movelist.push([i, i+2, "castle", "k"]);
 				}
 				if(thisnode.castle.q && 
-					!+thisnode.position[1] && 
 					!+thisnode.position[2] && 
 					!+thisnode.position[3] && 
-					!squareInCheck(thisnode, 1, false) && 
 					!squareInCheck(thisnode, 2, false) && 
 					!squareInCheck(thisnode, 3, false) && 
 					!squareInCheck(thisnode, 4, false)
