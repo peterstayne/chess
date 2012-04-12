@@ -85,9 +85,9 @@ function clone(obj) {
    return target;
 }
 
-var perft = function(thisnode) {
+var moveGen64 = function(thisnode) {
 
-	// perft is the name of a function in a chess program that returns a list of legal moves
+	// function that returns a list of legal moves
 	// for a given board position (node)
 
 	var tS;
@@ -1057,7 +1057,7 @@ var domove = function(curnode, themove) {
 var doRandom = function() {
 	if(gameOn == false) return false;
 	var curnode = $("#board").data("node");
-	var ml = perft( curnode );
+	var ml = moveGen64( curnode );
 	var themove = ml[~~(Math.random() * ml.length)];
 	var gameOn = pushMove(curnode, themove);
 }
@@ -1128,10 +1128,10 @@ var getMoveString = function(curnode, ml) {
 	return mlhtml;
 }
 var updateMoveList = function() {
-	// general ui function: run perft and update the move list ui
+	// general ui function: run moveGen and update the move list ui
 	if(!gameOn) return false;
 	var curnode = $("#board").data("node");
-	var ml = perft( curnode );
+	var ml = moveGen64( curnode );
 	var mlhtml = '';
 	if(curnode.drawClock > 49 || !ml.length) {
 		gameOn = false;
@@ -1156,7 +1156,7 @@ var updateMoveList = function() {
 	}
 	$("#possible-moves .button-action").removeAttr("disabled");
 	mlhtml = '<ul>';
-	for(var i in ml) mlhtml += '<li data-perftid="' + i + '">' + getMoveString(curnode, ml[i]) + '</li>';
+	for(var i in ml) mlhtml += '<li data-movegenid="' + i + '">' + getMoveString(curnode, ml[i]) + '</li>';
 	mlhtml += '</ul>';
 	$("#movelist").html(mlhtml);
 	return true;
@@ -1200,7 +1200,7 @@ $(document).ready(function(){
 		$(".modal").css("display", "none");
 		if($(".fromsq").length) {
 			var curnode = $("#board").data("node");
-			var ml = perft(curnode);
+			var ml = moveGen64(curnode);
 			var fromsq = +($(".fromsq").eq(0).attr("id").replace("square", ""));
 			var tosq = +($(this).attr("id").replace("square", ""));
 			var themove = 0;
@@ -1257,7 +1257,7 @@ $(document).delegate(".promote-button", "click", function() {
 $(document).delegate("#possible-moves li", "click", function() {
 	if(!gameOn) return false;
 	var thisnode = $("#board").data("node");
-	var thismove = perft(thisnode)[$(this).attr("data-perftid")];
+	var thismove = moveGen64(thisnode)[$(this).attr("data-movegenid")];
 	pushMove(thisnode, thismove);
 });
 $(document).delegate("#game-moves li.move-item", "click", function() {
