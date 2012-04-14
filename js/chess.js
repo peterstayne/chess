@@ -1,3 +1,5 @@
+;(function(){
+
 var algebraicSquares = {
 	ranks: ['h','g','f','e','d','c','b','a'],   // backwards because top rank is rank 0 internally
 	symbols: {},
@@ -1276,3 +1278,5 @@ $("#player-settings-container input[type=radio]").change(function() {
 $("#reset-game").click(function() {
 	resetGame();
 });
+
+})();
