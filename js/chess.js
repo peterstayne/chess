@@ -1078,11 +1078,9 @@ var pushMove = function(curnode, move) {
 	if(!curmove && typeof gamemoves[curnode.moveNumber][1] !== 'undefined') gamemoves[curnode.moveNumber].splice(1,1);
 	gamemoves.splice(curnode.moveNumber + 1, gamemoves.length - curnode.moveNumber);
 
-
 	if(!!move) curnode = domove(curnode, move);
 	$("#board").data("node", curnode);
 	updateBoard();
-
 	if(gameOn && ((curnode.move && playerSettings[0] == "c") || (!curnode.move && playerSettings[1] == "c"))) setTimeout(doRandom, 5);
 }
 
@@ -1177,9 +1175,6 @@ var resetGame = function() {
 	var curnode = parsefen(resetFen);
 	$("#board").data("node", curnode);
 	pushMove(curnode, false);
-	if((curnode.move && playerSettings[0] == "c") || (!curnode.move && playerSettings[1] == "c")) {
-		doRandom();
-	}
 }
 
 $(document).ready(function(){
