@@ -1,8 +1,10 @@
 <!doctype html>
 <html>
 <head>
-<title>Chess!</title>
+<title>Chess!!</title>
+<link href='https://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" type="text/css" media="screen" href="css/style.css" />
+<meta name="viewport" content="width=device-width">
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
@@ -17,52 +19,123 @@
 
 </script>
 </head>
-<body>
-<div id="page">
-	<div id="board-container" class="board-container">
-		<div id="board" class="board ">
-		</div> 
-	</div>
-	<div id="board-info" class="board-info">
-		<div id="game-controls" class="info-panel">
-			<input type="button" id="reset-game" value="New Game" />
-		</div>
-		<div id="player-settings-container" class="info-panel">
-			<p>Player options</p>
-			<form name="player-settings-form" action="" method="get" />
-				<p><input type="radio" name="player-option" value="pvp" id="pvp" /> <label for="pvp">Player vs Player</label></p>
-				<p><input type="radio" name="player-option" value="pvc" id="pvc" checked="checked" /> <label for="pvp">Player vs Computer</label></p>
-				<p><input type="radio" name="player-option" value="cvp" id="cvp" /> <label for="pvp">Computer vs Player</label></p>
-				<p><input type="radio" name="player-option" value="cvc" id="cvc" /> <label for="pvp">Computer vs Computer</label></p>
-			</form>
-		</div>
-		<div id="turn" class="info-panel">
-		</div>
-<!--		<div id="castle" class="info-panel">
-		</div>
-		<div id="enpassant" class="info-panel">
-		</div>
-		<div id="movenumber" class="info-panel">
-		</div>
-		<div id="drawclock" class="info-panel">
-		</div>-->
-		<div id="possible-moves" class="info-panel">
-			<p>Possible Moves</p>
-			<input type="button" id="do-random" class="do-random button-action" value="Do Random" />
-			<div id="movelist">
+<body class="clearfix">
+		<h1 class="info-panel-header">Milkman's Chess</h1>
+		<div id="board-container" class="board-container">
+			<div class="board-inner">
+				<div id="board" class="board">
+				</div> 
 			</div>
 		</div>
-		<div id="game-moves" class="info-panel">
-			<p>Game Moves</p>
-			<div id="movelist">
+		<div id="info-container">
+			<div id="game-moves" class="info-panel">
+				<p class="info-panel-header">Game Info</p>
+				<div class="info-panel-content">
+					<div id="game-controls">
+						<input type="button" id="reset-game" value="New Game" />
+						<input type="button" id="flip-board" value="Flip Board" />
+					</div>
+					<p>Game Moves</p>
+					<div id="movelist">
+					</div>
+					<div class="controlpanel">
+						<label for="fen">FEN</label>
+						<input type="text" size="80" id="fen" class="fen" value="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1" />
+						<input type="button" value="submit" id="submitfen" />
+					</div>
+				</div>
+			</div>
+			<div class="info-panel white-side player-panel">
+				<p class="player-color info-panel-header">White</p>
+				<div class="info-panel-content">
+					<select name="player1" class="player-dd" id="player1"></select>
+					<div class="engine-output-text">
+					</div>
+				</div>
+			</div>
+			<div class="info-panel black-side player-panel">
+				<p class="player-color info-panel-header">Black</p>
+				<div class="info-panel-content">
+					<select name="player2" class="player-dd" id="player2"></select>
+					<div class="engine-output-text">
+					</div>
+				</div>
+			</div>
+			<div id="possible-moves" class="info-panel">
+				<p>Possible Moves</p>
+				<div id="movelist">
+				</div>
 			</div>
 		</div>
-	</div>
-	<div class="controlpanel">
-		<label for="fen">FEN</label>
-		<input type="text" size="80" id="fen" class="fen" value="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1" />
-		<input type="button" value="submit" id="submitfen" />
-	</div>
+		<div class="info-panel info-panel-about">
+			<p class="info-panel-header">About The Engines</p>
+			<div class="info-panel-content">
+				<p><strong>thinkMover 1.6 (In Development)</strong></p>
+				<p>Planned Changes:</p>
+				<ul>
+					<li>Convert some core data structures from arrays to bitwise values.</li>
+					<li>True alpha-beta pruning with killer-move and hash tables.</li>
+					<li>Greatly expand opening book.</li>
+				</ul>
+				<p><strong>thinkMover 1.5</strong></p>
+				<ul>
+					<li>Overhaul to make use of web workers for multi-threading!</li>
+					<li>Inlined another major helper function for speed.</li>
+					<li>Lots of cleanup to most piece-moving loops to remove unnecessary vars and incrementers.</li>
+					<li>Skip lots of unnecessary conditionals in searching.</li>
+					<li>~25 positions added to opening book plus some fixes.</li>
+					<li>Fix late-game detection for king evaluation.</li>
+					<li>Minor evaluation score adjustments.</li>
+					<li>Roughly 250,000 - 780,000 nodes/second. (quad-core)</li>
+				</ul>
+				<p><strong>thinkMover 1.4</strong></p>
+				<ul>
+					<li>Inline some helper functions for speed.</li>
+					<li>Speed up to move-invalidations due to check in move gen.</li>
+					<li>Many minor optimizations.</li>
+					<li>Many evaluation score adjustments.</li>
+					<li>Better engine output messages.</li>
+					<li>Improved quiescence.</li>
+					<li>Roughly 9000 - 14500 nodes/second.</li>
+				</ul>
+				<p><strong>thinkMover 1.3</strong></p>
+				<ul>
+					<li>Copy original move gen, squareInCheck, doMove, fastCloneNode and others into engine source for optimizations.</li>
+					<li>Piece/Square value maps for much more accurate evaluations for pawns, bishops, knights and kings.</li>
+					<li>Minor optimizations and evaluation score adjustments.</li>
+					<li>Roughly 7000 - 12500 nodes/second.</li>
+				</ul>
+				<p><strong>thinkMover 1.2</strong></p>
+				<ul>
+					<li>Opening book functionality added with ~50 positions.</li>
+					<li>Improved pawn-pushing evaluation.</li>
+					<li>Penalize doubled pawns.</li>
+					<li>Penalize isolated pawns.</li>
+					<li>Reward rooks on files with no self pawns, and reward even more if no pawns at all on its file.</li>
+					<li>Reward kings for moving toward corners in early game, and towards center in late game.</li>
+					<li>Replace ES5 forEach with basic 'for' loops for speed gain.</li>
+					<li>Improve quiescent searching.</li>
+					<li>Roughly 6000 - 12000 nodes/second.</li>
+				</ul>
+				<p><strong>thinkMover 1.1</strong></p>
+				<ul>
+					<li>Replaced slow jQuery $.extend() for node-copying for a big speed-up plus other optimizations.</li>
+					<li>Penalize knights in evaluation for being on any of the edges.</li>
+					<li>Very simple pawn-pushing bonuses in evaluation.</li>
+					<li>Roughly 2200 - 5500 nodes/second.</li>
+				</ul>
+				<p><strong>thinkMover 1.0</strong></p>
+				<ul>
+					<li>My first engine with a recursive min-max search tree.</li>
+					<li>Very simple and fairly weak.</li>
+					<li>Roughly 300-600 nodes/second.</li>
+					<li>Super basic material-only evaluation.</li>
+					<li>Quiescent search based on captures.</li>
+				</ul>
+				<p><strong>RandomMover</strong></p>
+				<p>Testing engine created after assembling all of the logic for a complete legal-move generator, including en passant, castling, 50-move draw rule, three-fold repitition, invalidation due to check, stalemate and checkmate. Simply looks at the current position, makes a list of all possible legal moves for itself and chooses one at random.</p>
+			</div>
+		</div>
 	<div class="modal" id="promote-white">
 		<p>Promote pawn to which piece?</p>
 		<form name="white-promote" id="white-promote" method="get" action="">
@@ -76,15 +149,22 @@
 	<div class="modal" id="promote-black">
 		<p>Promote pawn to which piece?</p>
 		<form name="black-promote" id="black-promote" method="get" action="">
-			<input class="promote-button" type="button" name="promote-q" id="promote-q" value="&#9813;" data-piece="5" />
-			<input class="promote-button" type="button" name="promote-r" id="promote-r" value="&#9814;" data-piece="4" />
-			<input class="promote-button" type="button" name="promote-b" id="promote-b" value="&#9815;" data-piece="3" />
-			<input class="promote-button" type="button" name="promote-n" id="promote-n" value="&#9816;" data-piece="2" />
+			<input class="promote-button" type="button" name="promote-q" id="promote-q" value="&#9819;" data-piece="5" />
+			<input class="promote-button" type="button" name="promote-r" id="promote-r" value="&#9820;" data-piece="4" />
+			<input class="promote-button" type="button" name="promote-b" id="promote-b" value="&#9821;" data-piece="3" />
+			<input class="promote-button" type="button" name="promote-n" id="promote-n" value="&#9822;" data-piece="2" />
 			<input class="cancel-modal" type="button" name="cancel" value="Cancel" />
 		</form>
 	</div>	
-</div>
-<script src="js/jquery-1.7.2.js"></script>
+
+<script src="js/jquery-2.2.0.min.js"></script>
 <script src="js/chess.js"></script>
+<script src="js/engines/thinkmover_1.0.js"></script>
+<script src="js/engines/thinkmover_1.1.js"></script>
+<script src="js/engines/thinkmover_1.2.js"></script>
+<script src="js/engines/thinkmover_1.3.js"></script>
+<script src="js/engines/thinkmover_1.4.js"></script>
+<script src="js/engines/thinkmover_1.5.js"></script>
+<script src="js/engines/thinkmover_1.6.js"></script>
 </body>
 </html>

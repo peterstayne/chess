@@ -1,0 +1,1 @@
+java -jar ../closure/compiler.jar --js chess.js --js engines/thinkmover_1.0.js --js engines/thinkmover_1.1.js --js engines/thinkmover_1.2.js --js engines/thinkmover_1.3.js --compilation_level SIMPLE_OPTIMIZATIONS --warning_level QUIET --externs jquery-2.2.0.min.js > chess.min.js
