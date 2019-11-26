@@ -1308,7 +1308,7 @@ game.engines.randomMover = {
 	getMove: function(curnode) {
 		var ml = game.moveGen( curnode );
 		var themove = ml[~~(Math.random() * ml.length)];
-		return themove;
+		return { move: themove };
 	}
 };
 
@@ -1328,12 +1328,15 @@ var adjustLayout = function() {
 	}
 	if(winWidth > 640) {
 		$boardContainer.css({ width: boardSize - 60, height: boardSize - 60 });
+		$('#board').css({
+			fontSize: boardSize / 12
+		});
 	} else {
 		$boardContainer.css({ width: boardSize, height: boardSize });
+		$('#board').css({
+			fontSize: boardSize / 11
+		});
 	}
-	$('#board').css({
-		fontSize: boardSize / 11
-	});
 	squareSize = $('.square').width() + 2;
 	redrawBoard();
 	// var boardInner = $('.board-inner').width();

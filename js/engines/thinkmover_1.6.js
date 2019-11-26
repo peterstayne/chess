@@ -1745,9 +1745,9 @@ var makePositionString = function(thisnode) {
 					thisEval = false;
 					thisnode = doMove(fastCloneNode(curnode), themove);
 					if(ply !== 0) {
-						thisEval = searchNode(thisnode, ply - 1, false, alpha, beta);
+						thisEval = searchNode(thisnode, ply - 1, false, alpha, beta).score;
 					} else if(qsq === false && thisnode.position[themove[1]] !== 0) {
-						thisEval = searchNode(thisnode, ply, themove[1], alpha, beta);
+						thisEval = searchNode(thisnode, ply, themove[1], alpha, beta).score;
 						if(thisEval === false) {
 							thisEval = evaluatePosition(thisnode);
 						}
@@ -1779,44 +1779,28 @@ var makePositionString = function(thisnode) {
 				if(curnode.move) {
 					if(kingInCheck(curnode, true)) {
 						// this is black checkmate, black wins
-						if(ply !== maxply) {
-							return -9999;
-						} else {
-							return { move: ml[bestMove[0]], score: -9999, nodecount: nodecount };
-						}
+						return { move: ml[bestMove[0]], score: -9999, nodecount: nodecount, alpha: alpha, beta: beta };
 					} else {
 						// draw
-						if(ply !== maxply) {
-							return 0;
-						} else {
-							return { move: ml[bestMove[0]], score: 0, nodecount: nodecount };
-						}
+						return { move: ml[bestMove[0]], score: 0, nodecount: nodecount, alpha: alpha, beta: beta };
 					}
 				} else {
 					if(kingInCheck(curnode, false)) {
 						// this is white checkmate, white wins
-						if(ply !== maxply) {
-							return 9999;
-						} else {
-							return { move: ml[bestMove[0]], score: 9999, nodecount: nodecount };
-						}
+						return { move: ml[bestMove[0]], score: 9999, nodecount: nodecount, alpha: alpha, beta: beta };
 					} else {
 						// draw
-						if(ply !== maxply) {
-							return 0;
-						} else {
-							return { move: ml[bestMove[0]], score: 0, nodecount: nodecount };
-						}
+						return { move: ml[bestMove[0]], score: 0, nodecount: nodecount, alpha: alpha, beta: beta };
 					}
 				}
 			}
 			if(ply !== maxply) {
-				return bestEval;
+				return { move: ml[bestMove[0]], score: bestEval, nodecount: nodecount, alpha: alpha, beta: beta };
 			}
 			if(typeof ml[bestMove[0]] === 'undefined') {
 				console.log('undefined bm', ml, bestMove)
 			}
-			return { move: ml[bestMove[0]], score: bestEval, nodecount: nodecount };
+			return { move: ml[bestMove[0]], score: bestEval, nodecount: nodecount, alpha: alpha, beta: beta };
 		}
 //		console.log('best:', ml[bestMove], bestEval, curnode);
 var maxply = 3;

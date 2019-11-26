@@ -1,0 +1,4 @@
+white -> max -> alpha, if eval is higher than alpha, cutoff
+black -> min -> beta, if eval is lower than beta, cutoff
+
+https://www.facebook.com/WarcraftMovie/videos/639316672900628/

@@ -134,6 +134,7 @@ html {
 }
 .isPlayerMove .movablePiece {
 	opacity: 1;
+	text-shadow: 0 0 14px #0a0;
 }
 .pwhite {
 	color: #fff;
